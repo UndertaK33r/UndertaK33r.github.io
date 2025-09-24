@@ -3,9 +3,10 @@
 <head>
   <title>
     
+    Go八股之并发编程（1） - 
     Undertaker的学习笔记
   </title>
-  <meta property="og:title" content="Undertaker的学习笔记" />
+  <meta property="og:title" content="Go八股之并发编程（1） - Undertaker的学习笔记" />
   <meta property="og:site_name" content="Undertaker的学习笔记" />
 
   <meta charset="utf-8" />
@@ -23,8 +24,8 @@
   
 
   
-  <link rel="canonical" href="http://example.com/archives/2025/09/">
-  <meta name="og:url" content="http://example.com/archives/2025/09/">
+  <link rel="canonical" href="http://example.com/2025/09/24/Go%E5%85%AB%E8%82%A1%E4%B9%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%881%EF%BC%89/">
+  <meta name="og:url" content="http://example.com/2025/09/24/Go%E5%85%AB%E8%82%A1%E4%B9%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%881%EF%BC%89/">
   
 <link rel="stylesheet" href="/css/style.css">
 
@@ -71,97 +72,76 @@
 <hr />
 
   <div class="main">
-    <div class="list">
+    
+<link rel="stylesheet" href="/css/post.css">
+
+<post>
+
+  <div class="post_title">
+    Go八股之并发编程（1）
+  </div>
+
+  <br /><br />
+
+  <div id="post_content">
+    <h1 id="进程·线程·协程"><a href="#进程·线程·协程" class="headerlink" title="进程·线程·协程"></a>进程·线程·协程</h1><h1 id="进程"><a href="#进程" class="headerlink" title="进程"></a>进程</h1><p>操作系统管理 CPU、内存、磁盘 IO 等硬件资源时，会以 “进程” 为最小粒度分配。<br>不同进程的资源相互隔离。<br>若打开两个浏览器窗口，就会对应两个独立进程，各自拥有资源、独立运行。</p>
+<h1 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h1><p>线程是进程内的执行单元，共享进程的内存和资源，多个线程可在同一进程内并发执行。<br>没有独立资源，依赖所属进程的资源生存。<br>CPU 调度的基本单位。</p>
+<p>ps 线程切换远小于进程但是也有额外开销，需要保存线程上下文，过程设计内核态切换等，会产生时间和资源消耗。</p>
+<p>大多数操作系统中一个线程默认会占用4MB内存</p>
+<h1 id="协程（goroutine）"><a href="#协程（goroutine）" class="headerlink" title="协程（goroutine）"></a>协程（goroutine）</h1><p>协程是线程的轻量级实现，由go 运行时管理，即被程序控制，开销远小于线程。</p>
+<p>Go Go 中一个 goroutine 初始默认占用2KB栈空间</p>
+<hr>
+<h1 id="GMP模型"><a href="#GMP模型" class="headerlink" title="GMP模型"></a>GMP模型</h1><p>什么是GMP模型？来收集一下G , M , P 的含义<br>G：goroutine<br>M：machine(OS threadMachine) — 线程<br>P：processor — 逻辑处理器（调度器）</p>
+<h3 id="G（Goroutine）-协程"><a href="#G（Goroutine）-协程" class="headerlink" title="G（Goroutine）- 协程"></a>G（Goroutine）- 协程</h3><p><strong>定义</strong>：Go中的轻量级线程，由Go运行时管理<br><strong>特点</strong>：<br>  初始栈大小仅<strong>2KB</strong>，可动态增长<br>  创建和销毁开销极小<br>  由Go调度器管理，不依赖操作系统线程调度<br><strong>状态</strong>：<br>  <code>Grunnable</code>: 可运行状态，等待被调度<br>  <code>Grunning</code>: 正在运行状态<br>  <code>Gwaiting</code>: 等待状态（如等待I&#x2F;O、channel操作）</p>
+<h3 id="M（Machine）-系统线程"><a href="#M（Machine）-系统线程" class="headerlink" title="M（Machine）- 系统线程"></a>M（Machine）- 系统线程</h3><p><strong>定义</strong>：操作系统的原生线程，真正执行代码的实体<br><strong>特点</strong>：<br>  对应操作系统的一个线程<br>  默认最大数量：<strong>10000</strong>个（可通过<code>GOMAXPROCS</code>调整）<br>  当M阻塞时，Go会创建新的M来保证并发执行<br><strong>生命周期</strong>：由Go运行时动态创建和销毁</p>
+<h3 id="P（Processor）-逻辑处理器"><a href="#P（Processor）-逻辑处理器" class="headerlink" title="P（Processor）- 逻辑处理器"></a>P（Processor）- 逻辑处理器</h3><p><strong>定义</strong>：调度器，负责G和M之间的调度协调<br><strong>特点</strong>：<br>  数量等于<code>GOMAXPROCS</code>设置值（默认等于CPU核心数）<br>  维护一个本地的G队列（<code>runqueue</code>）<br>  拥有执行G所需的资源和上下文<br><strong>作用</strong>：<br>  管理G的调度<br>  提供执行环境<br>  实现工作窃取（work stealing）</p>
+<h2 id="GMP调度机制"><a href="#GMP调度机制" class="headerlink" title="GMP调度机制"></a>GMP调度机制</h2><h3 id="调度策略"><a href="#调度策略" class="headerlink" title="调度策略"></a>调度策略</h3><h4 id="1-本地队列优先"><a href="#1-本地队列优先" class="headerlink" title="1. 本地队列优先"></a>1. <strong>本地队列优先</strong></h4><ul>
+<li>P首先从自己的本地队列中获取G执行</li>
+<li>本地队列为<strong>无锁队列</strong>，访问效率高</li>
+</ul>
+<h4 id="2-工作窃取（Work-Stealing）"><a href="#2-工作窃取（Work-Stealing）" class="headerlink" title="2. 工作窃取（Work Stealing）"></a>2. <strong>工作窃取（Work Stealing）</strong></h4><ul>
+<li>当P的本地队列为空时，从其他P的队列中”偷取”一半的G</li>
+<li>减少线程空闲，提高CPU利用率</li>
+</ul>
+<h4 id="3-全局队列"><a href="#3-全局队列" class="headerlink" title="3. 全局队列"></a>3. <strong>全局队列</strong></h4><ul>
+<li>当本地队列和其他P队列都为空时，从全局队列获取G</li>
+<li>全局队列需要加锁，访问开销较大</li>
+</ul>
+<h4 id="4-抢占式调度"><a href="#4-抢占式调度" class="headerlink" title="4. 抢占式调度"></a>4. <strong>抢占式调度</strong></h4><ul>
+<li>Go 1.14引入<strong>异步抢占</strong>机制</li>
+<li>防止某个G长时间占用P，保证调度公平性</li>
+</ul>
+
+  </div>
+
+  <br />
+
   
-<div class=index_list>
+  <br /><br />
 
-  <div class="line_1">
-    <div class="index_post_date">
-      「 九月 24日 」
-    </div>
-  </div>
-
-  <div class="index_post_title">
-    <a href="/2025/09/24/Go八股之并发编程（1）/">Go八股之并发编程（1）</a>
-  </div>
 
   
-  <div class="blank">
-    
-    <div class="index_post_tag"><a href="/tags/Go">
-      Go
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/goroutine">
-      goroutine
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/channel">
-      channel
-    </a></div>
-    
-  </div>
-  
 
-  <div class="index_post_excerpt">
-    
-  </div>
+<div id="copyright">
 
-  <!--
-  <a class="more" href="/2025/09/24/Go八股之并发编程（1）/">阅读更多</a>
-  -->
+  <a id="license-image" rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img height="15" width="80" alt="知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" />
+  </a>
 
+  <p id="license-word-hyper">
+    本作品采用
+    <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+    知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    进行许可。
+  </p>
 </div>
 
-<div class=index_list>
-
-  <div class="line_1">
-    <div class="index_post_date">
-      「 九月 24日 」
-    </div>
-  </div>
-
-  <div class="index_post_title">
-    <a href="/2025/09/24/我的第一篇文章/">我的第一篇文章</a>
-  </div>
-
-  
-  <div class="blank">
-    
-    <div class="index_post_tag"><a href="/tags/博客">
-      博客
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/第一篇">
-      第一篇
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/学习">
-      学习
-    </a></div>
-    
-  </div>
-  
-
-  <div class="index_post_excerpt">
-    
-  </div>
-
-  <!--
-  <a class="more" href="/2025/09/24/我的第一篇文章/">阅读更多</a>
-  -->
-
+  <div id="top">
+  <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</div>
+  <div onclick="document.getElementById('footer').scrollIntoView({behavior: 'smooth'})">▼</div>
 </div>
-
-
-<div class="page_num">
-
-  
   
 
-</div>
-</div>
-
+</post>
   </div>
 
   <foot id="footer">

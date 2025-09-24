@@ -47,13 +47,43 @@ h4 {
 .busuanzi {
   font-weight: bold;
 }
+/* 代码块样式优化 */
 pre,
 .highlight {
-  margin: 1rem 0;
-  padding-left: 0.5rem;
-  overflow: auto;
-  font-size: 1rem;
-  line-height: 1.5rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: #f8f8f8;
+  border: 1px solid #e1e1e8;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-size: 0.9rem;
+  line-height: 1.4;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+/* 代码块内的代码样式 */
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  color: #333;
+}
+/* 行内代码样式 */
+code {
+  background-color: #f1f3f4;
+  color: #d14;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9em;
+}
+/* highlight.js 样式覆盖 */
+.hljs {
+  background: #f8f8f8 !important;
+  color: #333 !important;
+  padding: 1rem !important;
+  border-radius: 6px;
+  border: 1px solid #e1e1e8;
 }
 pre code.hljs {
   padding: 0;
