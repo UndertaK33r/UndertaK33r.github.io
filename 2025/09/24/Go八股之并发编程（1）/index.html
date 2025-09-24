@@ -95,7 +95,7 @@
 <h3 id="G（Goroutine）-协程"><a href="#G（Goroutine）-协程" class="headerlink" title="G（Goroutine）- 协程"></a>G（Goroutine）- 协程</h3><p><strong>定义</strong>：Go中的轻量级线程，由Go运行时管理<br><strong>特点</strong>：<br>  初始栈大小仅<strong>2KB</strong>，可动态增长<br>  创建和销毁开销极小<br>  由Go调度器管理，不依赖操作系统线程调度<br><strong>状态</strong>：<br>  <code>Grunnable</code>: 可运行状态，等待被调度<br>  <code>Grunning</code>: 正在运行状态<br>  <code>Gwaiting</code>: 等待状态（如等待I&#x2F;O、channel操作）</p>
 <h3 id="M（Machine）-系统线程"><a href="#M（Machine）-系统线程" class="headerlink" title="M（Machine）- 系统线程"></a>M（Machine）- 系统线程</h3><p><strong>定义</strong>：操作系统的原生线程，真正执行代码的实体<br><strong>特点</strong>：<br>  对应操作系统的一个线程<br>  默认最大数量：<strong>10000</strong>个（可通过<code>GOMAXPROCS</code>调整）<br>  当M阻塞时，Go会创建新的M来保证并发执行<br><strong>生命周期</strong>：由Go运行时动态创建和销毁</p>
 <h3 id="P（Processor）-逻辑处理器"><a href="#P（Processor）-逻辑处理器" class="headerlink" title="P（Processor）- 逻辑处理器"></a>P（Processor）- 逻辑处理器</h3><p><strong>定义</strong>：调度器，负责G和M之间的调度协调<br><strong>特点</strong>：<br>  数量等于<code>GOMAXPROCS</code>设置值（默认等于CPU核心数）<br>  维护一个本地的G队列（<code>runqueue</code>）<br>  拥有执行G所需的资源和上下文<br><strong>作用</strong>：<br>  管理G的调度<br>  提供执行环境<br>  实现工作窃取（work stealing）</p>
-<h2 id="GMP调度机制"><a href="#GMP调度机制" class="headerlink" title="GMP调度机制"></a>GMP调度机制</h2><h3 id="调度策略"><a href="#调度策略" class="headerlink" title="调度策略"></a>调度策略</h3><h4 id="1-本地队列优先"><a href="#1-本地队列优先" class="headerlink" title="1. 本地队列优先"></a>1. <strong>本地队列优先</strong></h4><ul>
+<h2 id="GMP调度机制"><a href="#GMP调度机制" class="headerlink" title="GMP调度机制"></a>GMP调度机制</h2><h4 id="1-本地队列优先"><a href="#1-本地队列优先" class="headerlink" title="1. 本地队列优先"></a>1. <strong>本地队列优先</strong></h4><ul>
 <li>P首先从自己的本地队列中获取G执行</li>
 <li>本地队列为<strong>无锁队列</strong>，访问效率高</li>
 </ul>
@@ -107,9 +107,38 @@
 <li>当本地队列和其他P队列都为空时，从全局队列获取G</li>
 <li>全局队列需要加锁，访问开销较大</li>
 </ul>
-<h4 id="4-抢占式调度"><a href="#4-抢占式调度" class="headerlink" title="4. 抢占式调度"></a>4. <strong>抢占式调度</strong></h4><ul>
-<li>Go 1.14引入<strong>异步抢占</strong>机制</li>
-<li>防止某个G长时间占用P，保证调度公平性</li>
+<h2 id="g0"><a href="#g0" class="headerlink" title="g0"></a>g0</h2><ul>
+<li>在GMP模型中，M结构体里面有一个特殊的g叫做g0</li>
+<li>每个M在创建之初就会绑定一个g0</li>
+<li>g0负责比如：垃圾回收、调度协程、调度系统调用等</li>
+</ul>
+<h2 id="协程调度四种策略"><a href="#协程调度四种策略" class="headerlink" title="协程调度四种策略"></a>协程调度四种策略</h2><h4 id="1-协作式调度-Cooperative-Scheduling"><a href="#1-协作式调度-Cooperative-Scheduling" class="headerlink" title="1. 协作式调度 (Cooperative Scheduling)"></a>1. 协作式调度 (Cooperative Scheduling)</h4><ul>
+<li>goroutine会主动让出CPU，并等待下次调度,主要在以下情况<ul>
+<li>系统调用：如time.Sleep、网络I&#x2F;O等</li>
+<li>channel操作：发送或接收数据</li>
+<li>函数调用：在函数调用点检查是否需要调度</li>
+<li>手动调度：调用runtime.Gosched()</li>
+</ul>
+</li>
+<li>但缺点是如果一个goroutine长时间运行且不主动让出CPU，会导致其他goroutine”饿死”。<br>例如：</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DeadLoop</span><span class="params">()</span></span>&#123;  </span><br><span class="line">    <span class="keyword">for</span>&#123;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<h4 id="2-抢占式调度-Preemptive-Scheduling"><a href="#2-抢占式调度-Preemptive-Scheduling" class="headerlink" title="2. 抢占式调度 (Preemptive Scheduling)"></a>2. 抢占式调度 (Preemptive Scheduling)</h4><ul>
+<li><p>抢占式调度的触发条件</p>
+<ul>
+<li>执行时间过长：通常约10ms</li>
+<li>计算密集型任务：没有主动进行系统调用或调度让出行为</li>
+<li>函数调用链：在函数调用时检查是否需要抢占</li>
+</ul>
+</li>
+<li><p>抢占式调用实现</p>
+<ul>
+<li>基于信号的抢占：使用操作系统信号机制中断goroutine执行</li>
+<li>安全点检查：在函数调用等安全点检查是否需要抢占</li>
+<li>调度点标记：在编译时插入调度检查</li>
+</ul>
+</li>
 </ul>
 
   </div>
