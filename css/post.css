@@ -28,66 +28,211 @@ post a {
 #post_content p {
   margin-bottom: 1rem;
 }
+/* 标题样式优化 */
 h1 {
   font-weight: bold;
   font-size: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 2rem 0 1rem 0;
 }
 h2 {
   font-weight: bold;
   font-size: 1.8rem;
+  color: #2c3e50;
+  border-left: 4px solid #667eea;
+  padding-left: 1rem;
+  margin: 1.8rem 0 1rem 0;
 }
 h3 {
   font-weight: bold;
   font-size: 1.6rem;
+  color: #34495e;
+  position: relative;
+  margin: 1.5rem 0 1rem 0;
+}
+h3::before {
+  content: '▶';
+  color: #667eea;
+  margin-right: 0.5rem;
+  font-size: 0.8em;
 }
 h4 {
   font-weight: bold;
   font-size: 1.3rem;
+  color: #555;
+  margin: 1.2rem 0 0.8rem 0;
 }
 .busuanzi {
   font-weight: bold;
 }
-/* 代码块样式优化 */
-pre,
-.highlight {
+/* Hexo highlight.js 支持 */
+#post_content pre,
+#post_content .highlight {
   margin: 1.5rem 0;
-  padding: 1rem;
-  background-color: #f8f8f8;
-  border: 1px solid #e1e1e8;
-  border-radius: 6px;
-  overflow-x: auto;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 0;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
 }
-/* 代码块内的代码样式 */
-pre code {
-  background: none;
+/* Hexo生成的代码块结构 */
+#post_content .highlight table {
+  margin: 0;
+  width: 100%;
+  border-collapse: collapse;
+}
+#post_content .highlight td {
+  padding: 0;
+  border: none;
+}
+#post_content .highlight .gutter {
+  background: #f1f3f4;
+  border-right: 1px solid #e9ecef;
+  padding: 0;
+  width: 40px;
+  text-align: center;
+}
+#post_content .highlight .gutter pre {
+  background: transparent;
+  margin: 0;
+  padding: 20px 5px;
+  color: #999;
+  font-size: 13px;
+  line-height: 1.5;
+}
+#post_content .highlight .code {
+  background: #f8f9fa;
+  padding: 0;
+}
+#post_content .highlight .code pre {
+  background: transparent;
+  margin: 0;
+  padding: 20px;
+  color: #333;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+/* 传统代码块样式 */
+#post_content pre {
+  background: #f8f9fa;
+  padding: 20px;
+  color: #333;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: auto;
+  margin: 0;
+}
+#post_content pre code {
+  background: transparent;
   border: none;
   padding: 0;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  color: #333;
+  margin: 0;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 /* 行内代码样式 */
-code {
-  background-color: #f1f3f4;
-  color: #d14;
-  padding: 2px 4px;
-  border-radius: 3px;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  font-size: 0.9em;
+#post_content p code,
+#post_content li code,
+#post_content h1 code,
+#post_content h2 code,
+#post_content h3 code,
+#post_content h4 code {
+  background: #f1f3f4 !important;
+  color: #d73a49 !important;
+  padding: 2px 6px !important;
+  border-radius: 3px !important;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+  font-size: 0.9em !important;
+  border: none !important;
+  margin: 0 !important;
 }
-/* highlight.js 样式覆盖 */
-.hljs {
-  background: #f8f8f8 !important;
-  color: #333 !important;
-  padding: 1rem !important;
-  border-radius: 6px;
-  border: 1px solid #e1e1e8;
+/* 语法高亮样式 */
+.hljs-comment,
+.hljs-quote {
+  color: #6a737d;
+  font-style: italic;
 }
-pre code.hljs {
-  padding: 0;
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #d73a49;
+  font-weight: bold;
 }
-.hljs-ln-n {
-  padding-right: 0.5rem;
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #005cc5;
+}
+.hljs-string,
+.hljs-doctag {
+  color: #032f62;
+}
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #6f42c1;
+  font-weight: bold;
+}
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #d73a49;
+}
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #22863a;
+}
+.hljs-regexp,
+.hljs-link {
+  color: #032f62;
+}
+.hljs-symbol,
+.hljs-bullet {
+  color: #e36209;
+}
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #005cc5;
+}
+.hljs-meta {
+  color: #6a737d;
+}
+.hljs-deletion {
+  background: #ffeef0;
+}
+.hljs-addition {
+  background: #f0fff4;
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: bold;
+}
+/* 响应式设计 */
+@media (max-width: 768px) {
+  #post_content pre,
+  #post_content .highlight {
+    margin: 1rem 0;
+    border-radius: 4px;
+  }
+  #post_content .highlight .gutter pre,
+  #post_content .highlight .code pre,
+  #post_content pre {
+    padding: 15px !important;
+    font-size: 13px !important;
+  }
 }
