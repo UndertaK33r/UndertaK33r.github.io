@@ -1,40 +1,195 @@
 .title {
   text-align: center;
+  padding: 2rem 0;
+  animation: fadeInDown 1s ease-out;
 }
 .title_img {
   width: 300px;
   height: 300px;
-  border-radius: 50%; /* 创建圆形效果 */
-  border: 4px solid #b64444; /* 添加红色边框，与主题色一致 */
-  object-fit: cover; /* 确保图片完全填充圆形区域 */
-  transition: all 0.3s ease; /* 添加平滑过渡效果 */
+  border-radius: 50%;
+  border: 4px solid transparent;
+  background: linear-gradient(#fff, #fff) padding-box, linear-gradient(135deg, #667eea, #764ba2) border-box;
+  object-fit: cover;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 25px rgba(102,126,234,0.3);
 }
 .title_img:hover {
-  border-color: #d14e4e; /* 悬停时边框颜色变浅 */
-  transform: scale(1.05); /* 悬停时略微放大 */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 悬停时添加阴影 */
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 15px 40px rgba(102,126,234,0.4);
+  filter: brightness(1.1);
 }
 #site_title {
-  height: 3rem;
-  min-width: 20rem;
-  font-size: 2rem;
-  font-weight: bold;
-  line-height: 3rem;
-  color: #b64444;
-  margin-bottom: 1rem;
+  font-size: 3.5rem;
+  font-weight: 300; /* 纤细字重，现代感 */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #667eea 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 1.5rem 0;
+  position: relative;
+  letter-spacing: 0.05em; /* 适中的字符间距 */
+  font-family: 'Inter', 'Helvetica Neue', -apple-system, BlinkMacSystemFont, sans-serif; /* 现代无衬线字体 */
+  animation: slideInUp 0.8s ease-out 0.3s both;
+  text-align: center;
+  line-height: 1.1;
 }
 #site_title::before {
-  margin-right: 1rem;
-  content: '「 ';
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #667eea, transparent);
+  animation: pulse 2s ease-in-out infinite;
 }
 #site_title::after {
-  margin-left: 1rem;
-  content: ' 」';
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #764ba2, transparent);
+  animation: pulse 2s ease-in-out infinite 1s;
+}
+#site_title:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#site_title:hover::before,
+#site_title:hover::after {
+  width: 150px;
+  opacity: 1;
+  transition: all 0.3s ease;
 }
 @media all and (max-width: 700px) {
   .title_img {
     width: 150px;
     height: 150px; /* 手机端也设置固定高度保持圆形 */
+  }
+}
+@-moz-keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-webkit-keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-o-keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-moz-keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-webkit-keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-o-keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-moz-keyframes pulse {
+  0%, 100% {
+    opacity: 0.3;
+    width: 60px;
+  }
+  50% {
+    opacity: 1;
+    width: 120px;
+  }
+}
+@-webkit-keyframes pulse {
+  0%, 100% {
+    opacity: 0.3;
+    width: 60px;
+  }
+  50% {
+    opacity: 1;
+    width: 120px;
+  }
+}
+@-o-keyframes pulse {
+  0%, 100% {
+    opacity: 0.3;
+    width: 60px;
+  }
+  50% {
+    opacity: 1;
+    width: 120px;
+  }
+}
+@keyframes pulse {
+  0%, 100% {
+    opacity: 0.3;
+    width: 60px;
+  }
+  50% {
+    opacity: 1;
+    width: 120px;
   }
 }
 foot {
@@ -234,16 +389,41 @@ blockquote {
   background-color: #f6f0f0;
   color: #4f4f48;
 }
+/* 炫酷背景效果 */
 html {
-  background: #f0f0f0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%), url("data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="0.5" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>");
+  background-attachment: fixed;
   color: #3c3c3c;
+  position: relative;
+  min-height: 100vh;
 }
+/* 动态光影效果 */
+html::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: -1;
+  animation: shimmer 8s ease-in-out infinite;
+}
+/* 炫酷玻璃形态设计 */
 body {
   font-weight: normal;
   font-family: systrem-ui, -apple-systrem, BlinkMacSystremFont, Tahoma, Arial, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif, "Apple Color remoji", "Segoe UI remoji", "Segoe UI Symbol", "Noto Color remoji";
   word-wrap: break-word;
-  margin: 5% 10% 0 10%;
-  height: 100%;
+  margin: 2% 8% 0 8%;
+  min-height: 90vh;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2);
+  position: relative;
+  animation: slideInFromBottom 1s ease-out;
 }
 .main {
   height: 100%;
@@ -253,9 +433,12 @@ body {
   html {
     font-size: 0.9rem;
   }
+  body {
+    margin: 1rem;
+    border-radius: 15px;
+  }
   .main {
-    margin: 0;
-    margin-top: 15%;
+    margin: 1rem 0;
   }
 }
 h1::before,
@@ -317,4 +500,76 @@ ol {
 }
 code {
   font-family: monospace, sans-serif;
+}
+@-moz-keyframes shimmer {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+@-webkit-keyframes shimmer {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+@-o-keyframes shimmer {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+@keyframes shimmer {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+@-moz-keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-webkit-keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@-o-keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
