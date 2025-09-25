@@ -3,7 +3,7 @@
   padding: 3rem 0 2rem 0;
   position: relative;
 /* 移除CSS动画，由Anime.js控制 */
-  opacity: 0; /* 初始隐藏，等待Anime.js动画 */
+  opacity: 1; /* 显示元素，不再依赖Anime.js */
 }
 .title_img {
   width: 300px;
@@ -14,7 +14,7 @@
   object-fit: cover;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* 统一缓动函数 */
   box-shadow: 0 8px 25px rgba(125,211,252,0.2);
-  opacity: 0; /* 初始隐藏 */
+  opacity: 1; /* 显示元素，不再依赖Anime.js */
 }
 .title_img:hover {
   transform: scale(1.05);
@@ -35,7 +35,7 @@
   line-height: 1.1; /* 紧凑行高 */
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* 更流畅的过渡曲线 */
   text-shadow: 0 0 30px rgba(125,211,252,0.3); /* 添加微妙发光效果 */
-  opacity: 0; /* 初始隐藏，由Anime.js控制动画 */
+  opacity: 1; /* 显示元素，不再依赖Anime.js */
 }
 #site_title::before {
   content: '';
@@ -355,7 +355,7 @@ svg.icon:hover {
   color: inherit;
   font-weight: bold;
   font-size: 1.15rem;
-  opacity: 0; /* 初始隐藏，等待Anime.js动画 */
+  opacity: 1; /* 显示元素，不再依赖Anime.js */
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* 统一缓动函数 */
 }
 .navi .menu-item-link:hover {
@@ -638,7 +638,7 @@ body {
 .main {
   height: 100%;
   margin: 5% 15% 0 15%;
-  opacity: 0; /* 初始隐藏，由Anime.js控制 */
+  opacity: 1; /* 显示元素，不再依赖Anime.js */
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); /* 统一缓动函数 */
 }
 @media all and (max-width: 700px) {

@@ -35,9 +35,6 @@
   <!-- particles.js 库 -->
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   
-  <!-- Anime.js 动画库 - 现代动画增强 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha512-z4OUqw38qNLpn1libAN9BsoDx6nbNFio5lA6CuTp9NlK83b89hgyCVq+N5FdBJptINztxn1Z3SaKSKUS5UP60Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  
   
 <link rel="stylesheet" href="/css/style.css">
 
@@ -83,7 +80,8 @@
   <br /><br />
 
   <div id="post_content">
-    <h1 id="相关包的使用"><a href="#相关包的使用" class="headerlink" title="相关包的使用"></a>相关包的使用</h1><ul>
+    <h1 id="相关包的使用"><a href="#相关包的使用" class="headerlink" title="相关包的使用"></a>相关包的使用</h1><p>参考连接：<a target="_blank" rel="noopener" href="https://www.topgoer.com/">https://www.topgoer.com/</a></p>
+<ul>
 <li>在写这篇之前虽然看了一些包的使用，但似乎本人对于这些包的实践非常之少，以至于自己对这方面的认知非常浅薄，很容易忘记。</li>
 <li>所以接下来要忍住感觉到麻烦的心态给常用的都用一下并且记录一下</li>
 </ul>
@@ -101,10 +99,10 @@
 <h4 id="Once"><a href="#Once" class="headerlink" title="Once"></a>Once</h4><p>Once保证只执行一次<br>线程安全，多个 goroutine 同时调用也不会有问题</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Once <span class="hljs-keyword">struct</span> &#123;<br>	_ noCopy<br>	done atomic.Uint32<br>	m    Mutex<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(o *Once)</span></span> Do(f <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span>)<br><span class="hljs-comment">//----------------------------------------</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">var</span> once sync.Once<br>	<span class="hljs-keyword">var</span> wg sync.WaitGroup<br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++ &#123;<br>		wg.Add(<span class="hljs-number">1</span>)<br>		<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>			<span class="hljs-keyword">defer</span> wg.Done()<br>			once.Do(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>				fmt.Println(<span class="hljs-string">&quot;我只会出现一次&quot;</span>)<br>			&#125;)<br>		&#125;()<br>	&#125;<br>	wg.Wait()<br>&#125;<br></code></pre></td></tr></table></figure>
 
+<h4 id="atomic"><a href="#atomic" class="headerlink" title="atomic"></a>atomic</h4><p>由于mutex加锁要切换到内核态，而且涉及到上下文切换，性能会下降<br>而atomic是用户态的，基于 CPU 提供的原子指令，对于常见的数据类型使用atomic操作性能更好</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> x <span class="hljs-type">int64</span><br><span class="hljs-keyword">var</span> l sync.Mutex<br><span class="hljs-keyword">var</span> wg sync.WaitGroup<br><br><span class="hljs-comment">// 普通版加函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">add</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-comment">// x = x + 1</span><br>    x++ <span class="hljs-comment">// 等价于上面的操作</span><br>    wg.Done()<br>&#125;<br><br><span class="hljs-comment">// 互斥锁版加函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">mutexAdd</span><span class="hljs-params">()</span></span> &#123;<br>    l.Lock()<br>    x++<br>    l.Unlock()<br>    wg.Done()<br>&#125;<br><br><span class="hljs-comment">// 原子操作版加函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">atomicAdd</span><span class="hljs-params">()</span></span> &#123;<br>    atomic.AddInt64(&amp;x, <span class="hljs-number">1</span>)<br>    wg.Done()<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    start := time.Now()<br>    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10000</span>; i++ &#123;<br>        wg.Add(<span class="hljs-number">1</span>)<br>        <span class="hljs-comment">// go add()       // 普通版add函数 不是并发安全的</span><br>        <span class="hljs-comment">// go mutexAdd()  // 加锁版add函数 是并发安全的，但是加锁性能开销大</span><br>        <span class="hljs-keyword">go</span> atomicAdd() <span class="hljs-comment">// 原子操作版add函数 是并发安全，性能优于加锁版</span><br>    &#125;<br>    wg.Wait()<br>    end := time.Now()<br>    fmt.Println(x)<br>    fmt.Println(end.Sub(start))<br>&#125;<br></code></pre></td></tr></table></figure>
 
-
-
-
+<h2 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h2>
   </div>
 
   <br />
@@ -177,9 +175,6 @@
   
   <br />
 </foot>
-  
-  <!-- Anime.js 现代动画系统 -->
-  <script src="/js/anime-animations.js"></script>
   
   <!-- particles.js 初始化脚本 -->
   <script>
