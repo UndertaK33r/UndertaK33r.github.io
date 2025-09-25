@@ -376,28 +376,40 @@ textarea {
 }
 a {
   text-decoration: none;
-  color: #b64444;
+  color: #7dd3fc; /* 亮蓝色链接，在深色背景上清晰可见 */
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 a:hover {
-  color: #d14e4e;
+  color: #38bdf8; /* 悬停时更亮的蓝色 */
+  text-shadow: 0 0 8px rgba(125,211,252,0.4);
 }
 blockquote {
   margin: 0.3rem 0;
-  padding: 1rem;
-  font-size: 0.85rem;
-  border-left: 0.6rem #b64444 solid;
-  background-color: #f6f0f0;
-  color: #4f4f48;
-}
-/* 炫酷背景效果 */
-html {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%), url("data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="0.5" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>");
-  background-attachment: fixed;
-  color: #3c3c3c;
+  padding: 1.5rem;
+  font-size: 0.95rem;
+  border-left: 4px solid #7dd3fc; /* 亮蓝色边框 */
+  background: rgba(30,41,59,0.6); /* 深色半透明背景 */
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  color: #cbd5e1; /* 浅灰色文字 */
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  font-style: italic;
   position: relative;
-  min-height: 100vh;
+  border: 1px solid rgba(125,211,252,0.2);
+  border-left: 4px solid #7dd3fc;
 }
-/* 动态光影效果 */
+/* 黑色系背景效果 */
+html {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%) !important;
+  background-attachment: fixed !important;
+  color: #e2e8f0 !important; /* 浅灰色文字，在深色背景上清晰可见 */
+  position: relative;
+  min-height: 100vh !important;
+  overflow-x: hidden !important;
+}
+/* 黑色背景的微妙光影效果 */
 html::before {
   content: '';
   position: fixed;
@@ -405,25 +417,27 @@ html::before {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 50%);
+  background: radial-gradient(circle at 20% 50%, rgba(79,70,229,0.08) 0%, transparent 60%), radial-gradient(circle at 80% 20%, rgba(139,92,246,0.06) 0%, transparent 50%), radial-gradient(circle at 40% 80%, rgba(59,130,246,0.05) 0%, transparent 70%);
   pointer-events: none;
   z-index: -1;
-  animation: shimmer 8s ease-in-out infinite;
+  animation: darkShimmer 10s ease-in-out infinite;
 }
-/* 炫酷玻璃形态设计 */
+/* 黑色主题的玻璃形态设计 */
 body {
   font-weight: normal;
   font-family: systrem-ui, -apple-systrem, BlinkMacSystremFont, Tahoma, Arial, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif, "Apple Color remoji", "Segoe UI remoji", "Segoe UI Symbol", "Noto Color remoji";
   word-wrap: break-word;
   margin: 2% 8% 0 8%;
   min-height: 90vh;
-  background: rgba(255,255,255,0.25);
-  backdrop-filter: blur(20px);
+  background: rgba(30,41,59,0.3) !important; /* 深色半透明背景 */
+  backdrop-filter: blur(25px) !important;
   border-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.3);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.1) !important; /* 更微妙的边框 */
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
   position: relative;
+  z-index: 2;
   animation: slideInFromBottom 1s ease-out;
+  color: #f1f5f9 !important; /* 浅色文字 */
 }
 .main {
   height: 100%;
@@ -449,7 +463,7 @@ h5::before,
 h6::before {
   content: '#';
   margin-right: 0.5rem;
-  color: #3c3c3c;
+  color: #94a3b8; /* 浅灰色符号 */
 }
 h1,
 h2,
@@ -459,6 +473,7 @@ h5,
 h6 {
   font-weight: bold;
   margin: 1rem auto;
+  color: #f1f5f9; /* 浅色标题 */
 }
 ul {
   list-style: disc inside;
@@ -472,7 +487,9 @@ ol {
 }
 #top {
   width: 50px;
-  background-color: #dedbdb;
+  background: rgba(30,41,59,0.8); /* 深色半透明背景 */
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 1rem;
   position: fixed;
   bottom: 5%;
@@ -483,7 +500,7 @@ ol {
   display: block;
   font-size: 18px;
   line-height: 40px;
-  color: #3c3c3c;
+  color: #e2e8f0; /* 浅色文字 */
   text-decoration: none;
   cursor: pointer;
 }
@@ -496,41 +513,164 @@ ol {
   border-bottom-right-radius: 1rem 1rem;
 }
 #top div:hover {
-  background-color: #b6b6b6;
+  background: rgba(255,255,255,0.1);
 }
 code {
   font-family: monospace, sans-serif;
 }
-@-moz-keyframes shimmer {
+/* 白色粒子特效 */
+.particles-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1; /* 在背景之上，内容之下 */
+  overflow: hidden;
+}
+/* 单个白色粒子样式 */
+.particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(255,255,255,0.8) !important;
+  border-radius: 50%;
+  animation: floatUp 8s infinite linear;
+  box-shadow: 0 0 10px rgba(255,255,255,0.5), 0 0 20px rgba(255,255,255,0.3), 0 0 30px rgba(255,255,255,0.1);
+}
+/* 粒子上浮动画 */
+/* 为每个粒子设置不同的位置和动画延迟 */
+.particle:nth-child(1) {
+  left: 5%;
+  animation-delay: 0s;
+  animation-duration: 8s;
+}
+.particle:nth-child(2) {
+  left: 15%;
+  animation-delay: 1s;
+  animation-duration: 10s;
+}
+.particle:nth-child(3) {
+  left: 25%;
+  animation-delay: 2s;
+  animation-duration: 7s;
+}
+.particle:nth-child(4) {
+  left: 35%;
+  animation-delay: 0.5s;
+  animation-duration: 9s;
+}
+.particle:nth-child(5) {
+  left: 45%;
+  animation-delay: 1.5s;
+  animation-duration: 8s;
+}
+.particle:nth-child(6) {
+  left: 55%;
+  animation-delay: 2.5s;
+  animation-duration: 11s;
+}
+.particle:nth-child(7) {
+  left: 65%;
+  animation-delay: 3s;
+  animation-duration: 6s;
+}
+.particle:nth-child(8) {
+  left: 75%;
+  animation-delay: 0.2s;
+  animation-duration: 9s;
+}
+.particle:nth-child(9) {
+  left: 85%;
+  animation-delay: 1.2s;
+  animation-duration: 8s;
+}
+.particle:nth-child(10) {
+  left: 95%;
+  animation-delay: 2.2s;
+  animation-duration: 10s;
+}
+.particle:nth-child(11) {
+  left: 10%;
+  animation-delay: 3.2s;
+  animation-duration: 7s;
+}
+.particle:nth-child(12) {
+  left: 20%;
+  animation-delay: 0.8s;
+  animation-duration: 9s;
+}
+.particle:nth-child(13) {
+  left: 30%;
+  animation-delay: 1.8s;
+  animation-duration: 8s;
+}
+.particle:nth-child(14) {
+  left: 40%;
+  animation-delay: 2.8s;
+  animation-duration: 11s;
+}
+.particle:nth-child(15) {
+  left: 50%;
+  animation-delay: 3.8s;
+  animation-duration: 6s;
+}
+.particle:nth-child(16) {
+  left: 60%;
+  animation-delay: 0.3s;
+  animation-duration: 9s;
+}
+.particle:nth-child(17) {
+  left: 70%;
+  animation-delay: 1.3s;
+  animation-duration: 8s;
+}
+.particle:nth-child(18) {
+  left: 80%;
+  animation-delay: 2.3s;
+  animation-duration: 10s;
+}
+.particle:nth-child(19) {
+  left: 90%;
+  animation-delay: 3.3s;
+  animation-duration: 7s;
+}
+.particle:nth-child(20) {
+  left: 12%;
+  animation-delay: 0.7s;
+  animation-duration: 9s;
+}
+@-moz-keyframes darkShimmer {
   0%, 100% {
-    opacity: 0.3;
+    opacity: 0.4;
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.7;
   }
 }
-@-webkit-keyframes shimmer {
+@-webkit-keyframes darkShimmer {
   0%, 100% {
-    opacity: 0.3;
+    opacity: 0.4;
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.7;
   }
 }
-@-o-keyframes shimmer {
+@-o-keyframes darkShimmer {
   0%, 100% {
-    opacity: 0.3;
+    opacity: 0.4;
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.7;
   }
 }
-@keyframes shimmer {
+@keyframes darkShimmer {
   0%, 100% {
-    opacity: 0.3;
+    opacity: 0.4;
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.7;
   }
 }
 @-moz-keyframes slideInFromBottom {
@@ -571,5 +711,69 @@ code {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+@-moz-keyframes floatUp {
+  0% {
+    transform: translateY(100vh) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+@-webkit-keyframes floatUp {
+  0% {
+    transform: translateY(100vh) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+@-o-keyframes floatUp {
+  0% {
+    transform: translateY(100vh) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh) translateX(0px) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) translateX(100px) rotate(360deg);
+    opacity: 0;
   }
 }

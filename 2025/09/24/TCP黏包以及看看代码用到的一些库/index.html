@@ -39,6 +39,30 @@
 <meta name="generator" content="Hexo 8.0.0"></head>
 
 <body>
+  <!-- 白色粒子特效容器 -->
+  <div class="particles-container">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+  
   <div class="title">
   <img class="title_img" alt="Title image" width="300" height="300" src="/images/mylogo.jpg" /><br>
   <div id="site_title">Undertaker的学习笔记</div>
@@ -106,7 +130,7 @@
 <hr>
 <p>接下来看看编解码怎么做</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> proto<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;bufio&quot;</span><br>	<span class="hljs-string">&quot;bytes&quot;</span><br>	<span class="hljs-string">&quot;encoding/binary&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Encode</span><span class="hljs-params">(message <span class="hljs-type">string</span>)</span></span> ([]<span class="hljs-type">byte</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">//前4字节表示长度</span><br>	<span class="hljs-keyword">var</span> length = <span class="hljs-type">int32</span>(<span class="hljs-built_in">len</span>(message))<br>	<span class="hljs-comment">//创建一个字节缓冲区</span><br>	<span class="hljs-keyword">var</span> pkg = <span class="hljs-built_in">new</span>(bytes.Buffer)<br><br>	<span class="hljs-comment">//写入长度</span><br>	<span class="hljs-comment">//Write函数接受三个参数，第一个参数是io.Writer，第二个参数是编码格式，第三个参数是要写入的数据</span><br>	err := binary.Write(pkg, binary.LittleEndian, length)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br><br>	err = binary.Write(pkg, binary.LittleEndian, []<span class="hljs-type">byte</span>(message))<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> pkg.Bytes(), <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Decode</span><span class="hljs-params">(reader *bufio.Reader)</span></span> (<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">//length 是原始数据，size 是经过解码后的有意义的长度值。</span><br>	length, _ := reader.Peek(<span class="hljs-number">4</span>)<br>	buf := bytes.NewBuffer(length)<br>	<span class="hljs-keyword">var</span> size <span class="hljs-type">int32</span><br>	<span class="hljs-comment">//把长度读到size里面</span><br>	err := binary.Read(buf, binary.LittleEndian, &amp;size)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, err<br>	&#125;<br>	<span class="hljs-comment">// 主要处理粘包问题的代码</span><br>	<span class="hljs-comment">// 保证数据完整性，缓冲区中的数据足够构成一个完整的数据包</span><br>	<span class="hljs-keyword">if</span> <span class="hljs-type">int32</span>(reader.Buffered()) &lt; size+<span class="hljs-number">4</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, err<br>	&#125;<br><br>	pack := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-type">int</span>(<span class="hljs-number">4</span>+size))<br>	_, err = reader.Read(pack)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-type">string</span>(pack[<span class="hljs-number">4</span>:]), <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
-<p>这次懒得再深入了，补充了一些注解<br>在客户端和服务端调用即可，详情见参考链接。</p>
+<p>这次懒得再深入了，补充了一些注解<br>在客户端和服务端调用即可，主要看看这两个函数需要接受什么参数然后把原代码中有的类型按需求放进去就行。<br>详情见参考链接。</p>
 
   </div>
 
