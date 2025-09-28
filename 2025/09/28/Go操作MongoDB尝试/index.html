@@ -93,6 +93,86 @@
 <blockquote>
 <p>func Connect(ctx context.Context, opts …*options.ClientOptions) (<em>Client, error)<br>选项设置：ClientOptions 的 Set</em> 方法调用顺序关键，后调用的会覆盖先前设置（含 ApplyURI），以此控制选项优先级。<br>选项合并：通过 options.MergeClientOptions 处理参数，会整体覆盖先前选项字段，不支持部分覆盖（如前一选项设用户名、后一仅设密码，合并后用户名为空）。<br>客户端行为：NewClient 不做 I&#x2F;O 操作，仅校验选项；Client.Connect 启动后台协程监控部署，主协程无 I&#x2F;O 避免阻塞，且服务不可用时也不返回错误。<br>连接验证：需通过 Client.Ping 方法验证连接是否成功及配置是否正确。</p>
 </blockquote>
+<h4 id="创建一个Collection"><a href="#创建一个Collection" class="headerlink" title="创建一个Collection"></a>创建一个Collection</h4><p>Collection（集合） 是 MongoDB 中的一个逻辑容器，用来存储相关的 document（文档）<br>类似于关系型数据库（如 MySQL）中的 表（table） 的概念。</p>
+<p>特点 ：</p>
+<ul>
+<li>无固定结构：同一个 collection 中的 document 可以有不同的字段结构</li>
+<li>动态创建：当向一个不存在的 collection 插入数据时，MongoDB 会自动创建该 collection</li>
+<li>独立存在：每个 collection 都属于一个特定的 database（数据库）</li>
+</ul>
+<p>举个例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 在 Go 代码中操作 collection</span><br>collection := client.Database(<span class="hljs-string">&quot;testdb&quot;</span>).Collection(<span class="hljs-string">&quot;users&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+<h2 id="CRUD尝试"><a href="#CRUD尝试" class="headerlink" title="CRUD尝试"></a>CRUD尝试</h2><p>创建一个Collection之后，我们就可以开始尝试CRUD了。</p>
+<h3 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//func (coll *Collection) InsertOne(ctx context.Context, document interface&#123;&#125;, opts ...*options.InsertOneOptions) (*InsertOneResult, error)</span><br>one, err := collection.InsertOne(context.TODO(), bson.M&#123;<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;zhangsan&quot;</span>, <span class="hljs-string">&quot;age&quot;</span>: <span class="hljs-number">18</span>&#125;) <span class="hljs-comment">//one 是一个包裹了新插入数据生成的id的struct</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>记得导入”go.mongodb.org&#x2F;mongo-driver&#x2F;bson”</p>
+</blockquote>
+<p>除了InsertOne方法，还有InsertMany方法，可以一次插入多个数据。<br>不过在进一步之前，我们需要了解bson是什么<br>bson是MongoDB的文档格式，它使用JSON语法，但有如下区别：</p>
+<ul>
+<li>bson支持64位整数，JSON不支持</li>
+<li>bson支持二进制数据，JSON不支持</li>
+<li>bson支持嵌套对象，JSON不支持</li>
+<li>bson支持时间，JSON不支持</li>
+<li>bson支持正则表达式，JSON不支持</li>
+<li>bson支持对象ID，JSON不支持</li>
+</ul>
+<p>而从实用性角度出发我们得了解一下bson包里面都有什么，就上上面用到的这个bson.M</p>
+<h4 id="基本数据类型："><a href="#基本数据类型：" class="headerlink" title="基本数据类型："></a>基本数据类型：</h4><ul>
+<li>bson.M - 无序的 map[string]interface{}，最常用的文档类型</li>
+<li>bson.D - 有序的 []bson.E 切片，保持字段顺序</li>
+<li>bson.A - 有序的 []interface{} 切片，用于数组</li>
+<li>bson.E - 单个元素 struct{Key string; Value interface{}}</li>
+</ul>
+<p>我们先了解这些基本类型，其他的类型再说。<br>顺序不顺序什么的我暂时也不清楚，边看边学先。</p>
+<p>接下来是创建多个文档,InsertMany接受的第二个参数documents是空接口的切片</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">users := []<span class="hljs-keyword">interface</span>&#123;&#125;&#123;<br>	bson.M&#123;<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;undertaker&quot;</span>, <span class="hljs-string">&quot;age&quot;</span>: <span class="hljs-number">22</span>, <span class="hljs-string">&quot;sex&quot;</span>: <span class="hljs-string">&quot;male&quot;</span>&#125;,<br>	bson.M&#123;<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;violet&quot;</span>, <span class="hljs-string">&quot;age&quot;</span>: <span class="hljs-number">20</span>, <span class="hljs-string">&quot;sex&quot;</span>: <span class="hljs-string">&quot;male&quot;</span>&#125;,<br>&#125;<br>_, err = collection.InsertMany(context.TODO(), users)<br></code></pre></td></tr></table></figure>
+
+<h3 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h3><p>万里长征第一步创建数据，已经完成，接下来我们就可以尝试把数据库中的数据读出来了😋</p>
+<p>Find函数需要接受一个filter来找相关的数据，类似于 SQL 中的 WHERE 子句</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//func (coll *Collection) FindOne(ctx context.Context, filter interface&#123;&#125;, opts ...*options.FindOneOptions) *SingleResult</span><br>filter := bson.M&#123;<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;undertaker&quot;</span>&#125;<br>find := collection.FindOne(context.TODO(), filter)<br><span class="hljs-keyword">if</span> find.Err() != <span class="hljs-literal">nil</span> &#123;<br>    <span class="hljs-keyword">return</span><br>&#125;<br><span class="hljs-keyword">var</span> result bson.M<br>find.Decode(&amp;result)<br>fmt.Println(result)<br></code></pre></td></tr></table></figure>
+<p>collection.FindOne方法返回的是一个SingleResult，SingleResult是一个结构体，里面有Decode方法，这个方法可以将查询到的数据解码到result变量中。<br>如果查询不到数据，那么SingleResult.Decode方法就会返回一个空的map[]。<br>如果是collection.Find方法，返回的就是*mongo.Cursor，我们可以遍历Cursor解码来获取数据。</p>
+<ul>
+<li>Find函数比FindOne函数处理要不一样很多</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go">filter := bson.M&#123;<span class="hljs-string">&quot;sex&quot;</span>: <span class="hljs-string">&quot;male&quot;</span>&#125;<br>find, err := collection.Find(context.TODO(), filter)<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	<span class="hljs-keyword">return</span><br>&#125;<br><span class="hljs-keyword">var</span> result []bson.M<br><span class="hljs-keyword">for</span> find.Next(context.TODO()) &#123;<br>	<span class="hljs-keyword">var</span> temp bson.M<br>	err := find.Decode(&amp;temp)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	result = <span class="hljs-built_in">append</span>(result, temp)<br>&#125;<br><span class="hljs-keyword">for</span> _, item := <span class="hljs-keyword">range</span> result &#123;<br>	fmt.Println(item[<span class="hljs-string">&quot;name&quot;</span>])<br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>Cursor 对象内部维护一个当前文档的指针<br>Next 方法作用：<br>find.Next(context.TODO()) 将游标移动到下一个文档位置 返回 true 表示还有文档可读，false 表示已到达末尾.<br>可以类比成刚返回的Cursor对象处于一个哨兵的状态</p>
+</blockquote>
+<h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><p>没有想到查询居然有点新鲜的概念,在看之前也没太想得到。不过经历了查询我们可以开始更新数据的尝试了😋<br>更新有这些方法：</p>
+<ul>
+<li>UpdateOne</li>
+<li>UpdateMany</li>
+<li>ReplaceOne</li>
+</ul>
+<p>相比于查询，更新操作的返回值就很统一，叫UpdateResult。非常的直白😀<br>为什么更新函数我要先讲返回值呢？因为这个返回值不赖，能从里面看出更新操作的一些场景会发生什么。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> UpdateResult <span class="hljs-keyword">struct</span> &#123;<br>	MatchedCount  <span class="hljs-type">int64</span>       <span class="hljs-comment">// 与筛选条件匹配的文档数量。</span><br>	ModifiedCount <span class="hljs-type">int64</span>       <span class="hljs-comment">// 被操作修改的文档数量。</span><br>	UpsertedCount <span class="hljs-type">int64</span>       <span class="hljs-comment">// 被操作插入的文档数量。</span><br>	UpsertedID    <span class="hljs-keyword">interface</span>&#123;&#125; <span class="hljs-comment">// 插入文档的_id字段，如果没有执行插入操作则为nil。</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>如果没有匹配到筛选条件，那么MatchedCount为0，ModifiedCount为0，UpsertedCount为0，UpsertedID为nil<br>这里很奇怪啊，一般能想到的就是匹配不到才需要插入，但是这里没有匹配到，那么UpsertedCount为0，UpsertedID为nil，那这俩存在的意义？<br>答案是这里需要设置Upsert参数为true</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go">opts := options.Update().SetUpsert(<span class="hljs-literal">true</span>)<br>filter := bson.M&#123;<span class="hljs-string">&quot;sex&quot;</span>: <span class="hljs-string">&quot;female&quot;</span>&#125;<br>update := bson.M&#123;<span class="hljs-string">&quot;$set&quot;</span>: bson.M&#123;<span class="hljs-string">&quot;age&quot;</span>: <span class="hljs-number">31</span>&#125;&#125;<br>find, err := collection.UpdateOne(context.TODO(), filter, update, opts)<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	<span class="hljs-built_in">panic</span>(err)<br>&#125;<br>fmt.Println(find.UpsertedID)<br></code></pre></td></tr></table></figure>
+<p>这样如果没有匹配到数值就会插入一个新文档，并且返回插入的文档的_id字段。<br>而且你看，这里的opts的使用在前面的查询和创建函数的参数需求里是一个可选参数，前面没有解释怎么用，这里就是一个例子。</p>
+<p>停停停，这更新函数的参数的filter能理解，这个update参数是在？怎么有dollar🤑<br>这里解释一下，这里是更新操作的操作符，更新除了设置值还有一些别的需求嘛。这里拉一些常用的更新操作符：</p>
+<ul>
+<li>“$set”：设置字段值</li>
+<li>“$unset”：删除字段</li>
+<li>“$inc”：增加字段值</li>
+<li>“$push”：向数组添加元素</li>
+<li>“$pull”：从数组移除元素</li>
+<li>“$addToSet” ：向数组添加元素，如果元素已经存在，则不添加<br>举个例子：</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//update := bson.M&#123;&quot;$unset&quot;: bson.M&#123;&quot;age&quot;: &quot;&quot;&#125;&#125; // [ &#123; &quot;sex&quot;: &quot;female&quot; &#125; ]</span><br><span class="hljs-comment">//update := bson.M&#123;&quot;$inc&quot;: bson.M&#123;&quot;age&quot;: 1&#125;&#125; //[ &#123; &quot;age&quot;: 1, &quot;sex&quot;: &quot;female&quot; &#125; ]</span><br><span class="hljs-comment">//update := bson.M&#123;&quot;$push&quot;: bson.M&#123;&quot;hobbies&quot;: &quot;swimming&quot;&#125;&#125; //[ &#123; &quot;age&quot;: 64, &quot;sex&quot;: &quot;female&quot;, &quot;hobbies&quot;: [&quot;swimming&quot;] &#125; ]</span><br><span class="hljs-comment">//update := bson.M&#123;&quot;$pull&quot;: bson.M&#123;&quot;hobbies&quot;: &quot;swimming&quot;&#125;&#125; //[ &#123; &quot;age&quot;: 64, &quot;sex&quot;: &quot;female&quot; &#125;,&quot;hobbies&quot;: []]</span><br>find, err := collection.UpdateOne(context.TODO(), filter, update, opts)<br></code></pre></td></tr></table></figure>
+<p>如何，现在对更新操作大概知道使用方法了🙌</p>
+<h3 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h3><p>删除有这些方法：</p>
+<ul>
+<li>DeleteOne</li>
+<li>DeleteMany </li>
+<li>Drop &#x2F;&#x2F;删除集合，且删除不存在的集合也是安全的</li>
+</ul>
+<p>Drop的使用很简单，就是collection.Drop(context.TODO())，这样整个collection都会被删掉了。提示一遍，collection就是你在操作的类似数据表的东西</p>
+<p>来看看另外两个删除方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">filter := bson.M&#123;<span class="hljs-string">&quot;name&quot;</span>: <span class="hljs-string">&quot;violet&quot;</span>&#125;<br>_, err = collection.DeleteOne(context.TODO(), filter)<br></code></pre></td></tr></table></figure>
+<p>感觉十分好理解啊<br>运行之后第一个叫violet的对象被删除了<br>如果是删除多个对象，那么DeleteMany方法会删除所有匹配的文档<br>返回值：DeleteResult 记录了被删除的文档数量</p>
+<p>完事了，删除就是这么简单🤭</p>
+<p>以上就是mongoDB操作的尝试，个人感觉是覆盖了主要的使用场景的，希望对大家有用。</p>
 
   </div>
 
