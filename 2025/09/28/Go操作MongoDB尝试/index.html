@@ -3,9 +3,10 @@
 <head>
   <title>
     
+    Go操作MongoDB尝试 - 
     Undertaker&#39;s Blog
   </title>
-  <meta property="og:title" content="Undertaker&#39;s Blog" />
+  <meta property="og:title" content="Go操作MongoDB尝试 - Undertaker&#39;s Blog" />
   <meta property="og:site_name" content="Undertaker&#39;s Blog" />
 
   <meta charset="utf-8" />
@@ -23,8 +24,8 @@
   
 
   
-  <link rel="canonical" href="http://example.com/archives/">
-  <meta name="og:url" content="http://example.com/archives/">
+  <link rel="canonical" href="http://example.com/2025/09/28/Go%E6%93%8D%E4%BD%9CMongoDB%E5%B0%9D%E8%AF%95/">
+  <meta name="og:url" content="http://example.com/2025/09/28/Go%E6%93%8D%E4%BD%9CMongoDB%E5%B0%9D%E8%AF%95/">
   
   <!-- 现代化字体加载 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -67,277 +68,62 @@
 <hr />
 
   <div class="main">
-    <div class="list">
+    
+<link rel="stylesheet" href="/css/post.css">
+
+<post>
+
+  <div class="post_title">
+    Go操作MongoDB尝试
+  </div>
+
+  <br /><br />
+
+  <div id="post_content">
+    <p>一般来说，写项目时候都会用到数据库来做数据的持久化，大家基本上都是用MySQL，提到NoSQL的话，大家会想到Redis。虽然嘛也很够用，但是在最近AI项目越来越流行的情况下，我们要和大模型的接口进行交互，频繁的用到json格式的数据，这种情况下以bson格式存储数据会更加方便。而且怎么说呢，学点新技术来说也不错。<br>前天和朋友逛的时候聊到mongoDB，他说高手都用mongoDB，不管它说的是真的假的，实践一下总没错。</p>
+<h3 id="什么是mongoDB介绍"><a href="#什么是mongoDB介绍" class="headerlink" title="什么是mongoDB介绍"></a>什么是mongoDB介绍</h3><ul>
+<li>mongoDB是一个开源的NoSQL数据库，它使用JSON（JavaScript Object Notation）格式存储数据，并且支持查询、索引、更新和删除数据。mongoDB是一个文档型数据库，每个文档（document）是一个键值对（key-value）结构，它可以包含任意数量的字段，并且每个字段都可以包含任意类型的值。mongoDB是一个分布式数据库，它可以 horizontally scale（水平扩展），并且可以自动进行</li>
+</ul>
+<p>前面忘了后面忘了中间忘了，这个介绍只是水下字数，重点还是操作和怎么在需要它的场景下操作它。首先我们先配置一下MongoDB，用docker-compose来配置。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-attr">version:</span> <span class="hljs-string">&#x27;3.8&#x27;</span><br><span class="hljs-attr">services:</span><br>  <span class="hljs-attr">mongodb:</span><br>    <span class="hljs-attr">image:</span> <span class="hljs-string">mongo:latest</span><br>    <span class="hljs-attr">container_name:</span> <span class="hljs-string">mongodb_demo</span><br>    <span class="hljs-attr">ports:</span><br>      <span class="hljs-bullet">-</span> <span class="hljs-string">&quot;27017:27017&quot;</span><br><br><span class="hljs-attr">volumes:</span><br>  <span class="hljs-attr">mongodb_data:</span><br></code></pre></td></tr></table></figure>
+<p>这里只实现最简单的拉取镜像和容器创建，如果有需要可以进行用户和密码设置之类的，但现在暂时先不用，主要来看看具体操作数据库。</p>
+<p>创建一个go项目，然后创建一个main.go文件，这里我直接在项目根目录下创建一个main.go文件，然后打开main.go文件，添加以下代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;context&quot;</span><br>	<span class="hljs-string">&quot;go.mongodb.org/mongo-driver/mongo&quot;</span><br>	<span class="hljs-string">&quot;go.mongodb.org/mongo-driver/mongo/options&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 和mongodb建立连接</span><br>	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(<span class="hljs-string">&quot;mongodb://localhost:27017&quot;</span>))<br>	<span class="hljs-keyword">defer</span> client.Disconnect(context.TODO())<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-built_in">panic</span>(err)<br>	&#125;<br>	<span class="hljs-comment">// 看看是否连接成功</span><br>	client.Ping(context.TODO(), <span class="hljs-literal">nil</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>此处代码和mongoDB进行连接，然后记得调用client.Disconnect(context.TODO())结束连接。然后调用Ping方法看看有没有成功连接。</p>
+<blockquote>
+<p>func Connect(ctx context.Context, opts …*options.ClientOptions) (<em>Client, error)<br>选项设置：ClientOptions 的 Set</em> 方法调用顺序关键，后调用的会覆盖先前设置（含 ApplyURI），以此控制选项优先级。<br>选项合并：通过 options.MergeClientOptions 处理参数，会整体覆盖先前选项字段，不支持部分覆盖（如前一选项设用户名、后一仅设密码，合并后用户名为空）。<br>客户端行为：NewClient 不做 I&#x2F;O 操作，仅校验选项；Client.Connect 启动后台协程监控部署，主协程无 I&#x2F;O 避免阻塞，且服务不可用时也不返回错误。<br>连接验证：需通过 Client.Ping 方法验证连接是否成功及配置是否正确。</p>
+</blockquote>
+
+  </div>
+
+  <br />
+
   
-<div class=index_list>
+  <br /><br />
 
-  <div class="line_1">
-    <div class="index_post_date">
-      「 九月 28日 」
-    </div>
-  </div>
-
-  <div class="index_post_title">
-    <a href="/2025/09/28/Go操作MongoDB尝试/">Go操作MongoDB尝试</a>
-  </div>
 
   
-  <div class="blank">
-    
-    <div class="index_post_tag"><a href="/tags/Go">
-      Go
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/持久化">
-      持久化
-    </a></div>
-    
-  </div>
-  
 
-  <div class="index_post_excerpt">
-    
-  </div>
+<div id="copyright">
 
-  <!--
-  <a class="more" href="/2025/09/28/Go操作MongoDB尝试/">阅读更多</a>
-  -->
+  <a id="license-image" rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img height="15" width="80" alt="知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" />
+  </a>
 
+  <p id="license-word-hyper">
+    本作品采用
+    <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+    知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    进行许可。
+  </p>
 </div>
 
-<div class=index_list>
-
-  <div class="line_1">
-    <div class="index_post_date">
-      「 九月 26日 」
-    </div>
-  </div>
-
-  <div class="index_post_title">
-    <a href="/2025/09/26/Go语言AI实践过程（1）/">Go语言AI实践过程（1）</a>
-  </div>
-
-  
-  <div class="blank">
-    
-    <div class="index_post_tag"><a href="/tags/Go">
-      Go
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/AI">
-      AI
-    </a></div>
-    
-  </div>
-  
-
-  <div class="index_post_excerpt">
-    
-  </div>
-
-  <!--
-  <a class="more" href="/2025/09/26/Go语言AI实践过程（1）/">阅读更多</a>
-  -->
-
+  <div id="top">
+  <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</div>
+  <div onclick="document.getElementById('footer').scrollIntoView({behavior: 'smooth'})">▼</div>
 </div>
-
-<div class=index_list>
-
-  <div class="line_1">
-    <div class="index_post_date">
-      「 九月 25日 」
-    </div>
-  </div>
-
-  <div class="index_post_title">
-    <a href="/2025/09/25/个人最近计划/">个人最近计划</a>
-  </div>
-
-  
-  <div class="blank">
-    
-    <div class="index_post_tag"><a href="/tags/计划">
-      计划
-    </a></div>
-    
-  </div>
   
 
-  <div class="index_post_excerpt">
-    
-  </div>
-
-  <!--
-  <a class="more" href="/2025/09/25/个人最近计划/">阅读更多</a>
-  -->
-
-</div>
-
-<div class=index_list>
-
-  <div class="line_1">
-    <div class="index_post_date">
-      「 九月 25日 」
-    </div>
-  </div>
-
-  <div class="index_post_title">
-    <a href="/2025/09/25/Go八股之并发编程（2）/">Go八股之并发编程（2）</a>
-  </div>
-
-  
-  <div class="blank">
-    
-    <div class="index_post_tag"><a href="/tags/Go">
-      Go
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/goroutine">
-      goroutine
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/context">
-      context
-    </a></div>
-    
-  </div>
-  
-
-  <div class="index_post_excerpt">
-    
-  </div>
-
-  <!--
-  <a class="more" href="/2025/09/25/Go八股之并发编程（2）/">阅读更多</a>
-  -->
-
-</div>
-
-<div class=index_list>
-
-  <div class="line_1">
-    <div class="index_post_date">
-      「 九月 24日 」
-    </div>
-  </div>
-
-  <div class="index_post_title">
-    <a href="/2025/09/24/从TCP黏包出发，看看代码用到的一些库/">从TCP黏包出发，看看代码用到的一些库</a>
-  </div>
-
-  
-  <div class="blank">
-    
-    <div class="index_post_tag"><a href="/tags/Go">
-      Go
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/TCP">
-      TCP
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/package">
-      package
-    </a></div>
-    
-  </div>
-  
-
-  <div class="index_post_excerpt">
-    
-  </div>
-
-  <!--
-  <a class="more" href="/2025/09/24/从TCP黏包出发，看看代码用到的一些库/">阅读更多</a>
-  -->
-
-</div>
-
-<div class=index_list>
-
-  <div class="line_1">
-    <div class="index_post_date">
-      「 九月 24日 」
-    </div>
-  </div>
-
-  <div class="index_post_title">
-    <a href="/2025/09/24/Go八股之并发编程（1）/">Go八股之并发编程（1）</a>
-  </div>
-
-  
-  <div class="blank">
-    
-    <div class="index_post_tag"><a href="/tags/Go">
-      Go
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/goroutine">
-      goroutine
-    </a></div>
-    
-  </div>
-  
-
-  <div class="index_post_excerpt">
-    
-  </div>
-
-  <!--
-  <a class="more" href="/2025/09/24/Go八股之并发编程（1）/">阅读更多</a>
-  -->
-
-</div>
-
-<div class=index_list>
-
-  <div class="line_1">
-    <div class="index_post_date">
-      「 九月 24日 」
-    </div>
-  </div>
-
-  <div class="index_post_title">
-    <a href="/2025/09/24/我的第一篇文章/">我的第一篇文章</a>
-  </div>
-
-  
-  <div class="blank">
-    
-    <div class="index_post_tag"><a href="/tags/博客">
-      博客
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/第一篇">
-      第一篇
-    </a></div>
-    
-    <div class="index_post_tag"><a href="/tags/学习">
-      学习
-    </a></div>
-    
-  </div>
-  
-
-  <div class="index_post_excerpt">
-    
-  </div>
-
-  <!--
-  <a class="more" href="/2025/09/24/我的第一篇文章/">阅读更多</a>
-  -->
-
-</div>
-
-
-<div class="page_num">
-
-  
-  
-
-</div>
-</div>
-
+</post>
   </div>
 
   <foot id="footer">
