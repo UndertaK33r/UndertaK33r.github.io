@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>
+    
+    从TCP黏包出发，看看代码用到的一些库 - 
+    Undertaker&#39;s Blog
+  </title>
+  <meta property="og:title" content="从TCP黏包出发，看看代码用到的一些库 - Undertaker&#39;s Blog" />
+  <meta property="og:site_name" content="Undertaker&#39;s Blog" />
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  
+
+  <meta property="og:type" content="article" />
+
+
+  
+  <link rel="shortcut icon" href="/mylogo.ico" />
+  
+
+  
+
+  
+  <link rel="canonical" href="http://example.com/2025/09/24/%E4%BB%8ETCP%E9%BB%8F%E5%8C%85%E5%87%BA%E5%8F%91%EF%BC%8C%E7%9C%8B%E7%9C%8B%E4%BB%A3%E7%A0%81%E7%94%A8%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BA%93/">
+  <meta name="og:url" content="http://example.com/2025/09/24/%E4%BB%8ETCP%E9%BB%8F%E5%8C%85%E5%87%BA%E5%8F%91%EF%BC%8C%E7%9C%8B%E7%9C%8B%E4%BB%A3%E7%A0%81%E7%94%A8%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BA%93/">
+  
+  <!-- 现代化字体加载 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- particles.js 库 -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+<body>
+  <!-- particles.js 粒子系统容器 -->
+  <div id="particles-js"></div>
+  
+  <div class="title">
+  <img class="title_img" alt="Title image" width="300" height="300" src="/images/mylogo.jpg" /><br>
+  <div id="site_title">Undertaker's Blog</div>
+</div>
+  <div class="navi">
+  <a id="navi_item_title" href="/#" class="menu-item-link">
+    主页
+  </a>
+  <a id="navi_item_tags" href="/tags" class="menu-item-link">
+    标签
+  </a>
+  <a id="navi_item_about" href="/about" class="menu-item-link">
+    关于
+  </a>
+  <a id="navi_item_search" href="/search" class="menu-item-link">
+    搜索
+  </a>
+  
+</div>
+
+<hr />
+
+  <div class="main">
+    
+<link rel="stylesheet" href="/css/post.css">
+
+<post>
+
+  <div class="post_title">
+    从TCP黏包出发，看看代码用到的一些库
+  </div>
+
+  <br /><br />
+
+  <div id="post_content">
+    <h4 id="参考连接：-https-www-topgoer-com-E7-BD-91-E7-BB-9C-E7-BC-96-E7-A8-8B-socket-E7-BC-96-E7-A8-8B-TCP-E9-BB-8F-E5-8C-85-html"><a href="#参考连接：-https-www-topgoer-com-E7-BD-91-E7-BB-9C-E7-BC-96-E7-A8-8B-socket-E7-BC-96-E7-A8-8B-TCP-E9-BB-8F-E5-8C-85-html" class="headerlink" title="参考连接： https://www.topgoer.com/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/socket%E7%BC%96%E7%A8%8B/TCP%E9%BB%8F%E5%8C%85.html"></a>参考连接： <a target="_blank" rel="noopener" href="https://www.topgoer.com/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/socket%E7%BC%96%E7%A8%8B/TCP%E9%BB%8F%E5%8C%85.html">https://www.topgoer.com/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/socket%E7%BC%96%E7%A8%8B/TCP%E9%BB%8F%E5%8C%85.html</a></h4><h3 id="服务端代码"><a href="#服务端代码" class="headerlink" title="服务端代码"></a>服务端代码</h3><p>&#x2F;server&#x2F;server.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;bufio&quot;</span><br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;io&quot;</span><br>	<span class="hljs-string">&quot;net&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">process</span><span class="hljs-params">(conn net.Conn)</span></span> &#123;<br>	<span class="hljs-keyword">defer</span> conn.Close()<br>	reader := bufio.NewReader(conn)<br>	<span class="hljs-keyword">var</span> buf [<span class="hljs-number">1024</span>]<span class="hljs-type">byte</span><br>	<span class="hljs-keyword">for</span> &#123;<br>		n, err := reader.Read(buf[:])<br>		<span class="hljs-keyword">if</span> err == io.EOF &#123;<br>			<span class="hljs-keyword">break</span><br>		&#125;<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Println(<span class="hljs-string">&quot;read from client failed, err:&quot;</span>, err)<br>			<span class="hljs-keyword">break</span><br>		&#125;<br>		recvStr := <span class="hljs-type">string</span>(buf[:n])<br>		fmt.Println(<span class="hljs-string">&quot;收到client发来的数据：&quot;</span>, recvStr)<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br><br>	listen, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:30000&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;listen failed, err:&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-keyword">defer</span> listen.Close()<br>	<span class="hljs-keyword">for</span> &#123;<br>		conn, err := listen.Accept()<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Println(<span class="hljs-string">&quot;accept failed, err:&quot;</span>, err)<br>			<span class="hljs-keyword">continue</span><br>		&#125;<br>		<span class="hljs-keyword">go</span> process(conn)<br>	&#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="客户端代码"><a href="#客户端代码" class="headerlink" title="客户端代码"></a>客户端代码</h3><p>&#x2F;client&#x2F;client.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;net&quot;</span><br>	<span class="hljs-string">&quot;sync&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	conn, err := net.Dial(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:30000&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;dial failed, err&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-keyword">var</span> wg sync.WaitGroup<br>	<span class="hljs-keyword">defer</span> conn.Close()<br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">20</span>; i++ &#123;<br>		<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>			<span class="hljs-keyword">defer</span> wg.Done()<br>			msg := fmt.Sprintf(<span class="hljs-string">&quot;hello %d&quot;</span>, i)<br>			conn.Write([]<span class="hljs-type">byte</span>(msg))<br>		&#125;()<br>		wg.Add(<span class="hljs-number">1</span>)<br>	&#125;<br>	wg.Wait()<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>（其实这里不一定要用goroutine和waitgroup，但基本上写代码时候没怎么实操过goroutine所以在这里顺手写一下就当练习）</p>
+<p>虽然写了不少的go代码，但有些时候单纯用过第二次看的时候第一时间还是想不起来这玩意是干什么的，索性直接今天贴上代码时候把库的源码看一看。</p>
+<p>当然我们先来看看这两个代码的运行结果：<br>收到client发来的数据： hello 0hello 1hello 2hello 8<br>收到client发来的数据： hello 15hello 5<br>收到client发来的数据： hello 6<br>…<br>多余的我们先舍弃，前两行就能看出，部分消息黏在一起了，这就是TCP黏包<br>原因让AI来回答一下：</p>
+<ul>
+<li>TCP粘包的根本原因是TCP协议是面向字节流的协议，它不保证数据包的边界。</li>
+<li>在TCP协议中，数据包可能会被分片，即数据包被分成多个 smaller packets，然后这些 smaller packets 被发送到对方，然后这些 smaller packets 被重新组合成完整的数据包。</li>
+</ul>
+<p>这里有一些算法原因，比如：</p>
+<ul>
+<li>由Nagle算法造成的发送端的粘包：Nagle算法是一种改善网络传输效率的算法。简单来说就是当我们提交一段数据给TCP发送时，TCP并不立刻发送此段数据，而是等待一小段时间看看在等待期间是否还有要发送的数据，若有则会一次把这两段数据发送出去。</li>
+<li>接收端接收不及时造成的接收端粘包：TCP会把接收到的数据存在自己的缓冲区中，然后通知应用层取数据。当应用层由于某些原因不能及时的把TCP的数据取出来，就会造成TCP缓冲区中存放了几段数据。</li>
+</ul>
+<p>解决办法就是用编解码，实际上编解码的作用很多，这里似乎是顺手就解决了黏包问题😀</p>
+<p>还是先来看看上面的代码的一些函数的解释吧。这里还是不给出具体代码的解释，来看看源码需要什么参数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Conn is a generic stream-oriented network connection.</span><br><span class="hljs-comment">// Conn 是一种通用的面向流的网络连接。</span><br><span class="hljs-comment">// Multiple goroutines may invoke methods on a Conn simultaneously.</span><br><span class="hljs-comment">// 多个 goroutine 可以同时调用 Conn 上的方法。</span><br><span class="hljs-comment">// 总之Conn 接口定义了通用的面向流的网络连接，支持读写、关闭、地址获取及超时控制。</span><br><span class="hljs-keyword">type</span> Conn <span class="hljs-keyword">interface</span> &#123;<br>    Read(b []<span class="hljs-type">byte</span>) (n <span class="hljs-type">int</span>, err <span class="hljs-type">error</span>)<br>    Write(b []<span class="hljs-type">byte</span>) (n <span class="hljs-type">int</span>, err <span class="hljs-type">error</span>)<br>    Close() <span class="hljs-type">error</span><br>    <span class="hljs-comment">//...还有一些暂时没用到先省略</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>所以说TCP属于这个定义有其实现，那么我们看到main函数里面</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go">listen, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:30000&quot;</span>)<br>conn, err := listen.Accept()<br><span class="hljs-keyword">go</span> process(conn)<br></code></pre></td></tr></table></figure>
+<p>主要就是这三个函数<br>那么来看看net.Listen()</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//Listen 函数用于在本地网络地址上监听传入的连接。它支持 TCP、Unix 域套接字等协议，并根据需要自动选择端口。使用时需指定网络类型和地址，返回一个 Listener 实例。</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Listen</span><span class="hljs-params">(network, address <span class="hljs-type">string</span>)</span></span> (Listener, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-keyword">var</span> lc ListenConfig<br>	<span class="hljs-keyword">return</span> lc.Listen(context.Background(), network, address)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>总之就是 创建一个监听器，它会一直监听指定的地址和端口<br>Accept() 方法会返回一个连接对象，由于监听器指定了tcp，所以返回的连接对象也是tcp连接对象</p>
+<p>回到process方法<br>n, err :&#x3D; reader.Read(buf[:]) 这就是让缓冲器接受读到的数据</p>
+<p>接下来看看客户端的一些方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//这是一个便捷函数，封装了网络连接的创建过程，支持TCP、UDP、IP等协议。</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Dial</span><span class="hljs-params">(network, address <span class="hljs-type">string</span>)</span></span> (Conn, <span class="hljs-type">error</span>) &#123;<br>    <span class="hljs-keyword">var</span> d Dialer<br>	<span class="hljs-keyword">return</span> d.Dial(network, address)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>就是和我们的服务端对上连接了<br>咱们这里有两个conn，一个是conn是服务端，conn是客户端，相当于一个管子的两个口子，往里面做事情两边都能收得到<br>所以conn.Write([]byte(msg))<br>在服务端可以接受得到</p>
+<hr>
+<p>接下来看看编解码怎么做</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> proto<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;bufio&quot;</span><br>	<span class="hljs-string">&quot;bytes&quot;</span><br>	<span class="hljs-string">&quot;encoding/binary&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Encode</span><span class="hljs-params">(message <span class="hljs-type">string</span>)</span></span> ([]<span class="hljs-type">byte</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">//前4字节表示长度</span><br>	<span class="hljs-keyword">var</span> length = <span class="hljs-type">int32</span>(<span class="hljs-built_in">len</span>(message))<br>	<span class="hljs-comment">//创建一个字节缓冲区</span><br>	<span class="hljs-keyword">var</span> pkg = <span class="hljs-built_in">new</span>(bytes.Buffer)<br><br>	<span class="hljs-comment">//写入长度</span><br>	<span class="hljs-comment">//Write函数接受三个参数，第一个参数是io.Writer，第二个参数是编码格式，第三个参数是要写入的数据</span><br>	err := binary.Write(pkg, binary.LittleEndian, length)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br><br>	err = binary.Write(pkg, binary.LittleEndian, []<span class="hljs-type">byte</span>(message))<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> pkg.Bytes(), <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Decode</span><span class="hljs-params">(reader *bufio.Reader)</span></span> (<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">//length 是原始数据，size 是经过解码后的有意义的长度值。</span><br>	length, _ := reader.Peek(<span class="hljs-number">4</span>)<br>	buf := bytes.NewBuffer(length)<br>	<span class="hljs-keyword">var</span> size <span class="hljs-type">int32</span><br>	<span class="hljs-comment">//把长度读到size里面</span><br>	err := binary.Read(buf, binary.LittleEndian, &amp;size)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, err<br>	&#125;<br>	<span class="hljs-comment">// 主要处理粘包问题的代码</span><br>	<span class="hljs-comment">// 保证数据完整性，缓冲区中的数据足够构成一个完整的数据包</span><br>	<span class="hljs-keyword">if</span> <span class="hljs-type">int32</span>(reader.Buffered()) &lt; size+<span class="hljs-number">4</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, err<br>	&#125;<br><br>	pack := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-type">int</span>(<span class="hljs-number">4</span>+size))<br>	_, err = reader.Read(pack)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-type">string</span>(pack[<span class="hljs-number">4</span>:]), <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这次懒得再深入了，补充了一些注解<br>在客户端和服务端调用即可，主要看看这两个函数需要接受什么参数然后把原代码中有的类型按需求放进去就行。<br>详情见参考链接。</p>
+
+  </div>
+
+  <br />
+
+  
+  <br /><br />
+
+
+  
+
+<div id="copyright">
+
+  <a id="license-image" rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img height="15" width="80" alt="知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" />
+  </a>
+
+  <p id="license-word-hyper">
+    本作品采用
+    <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+    知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    进行许可。
+  </p>
+</div>
+
+  <div id="top">
+  <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</div>
+  <div onclick="document.getElementById('footer').scrollIntoView({behavior: 'smooth'})">▼</div>
+</div>
+  
+
+</post>
+  </div>
+
+  <foot id="footer">
+  <hr class="boldline" />
+  <br>
+
+  <p class="center font">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/UndertaK33r" aria-label="GitHub">
+  <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+   <path class="icon_path" d="M427.392 853.504a61.44 61.44 0 0 1-1.450667 15.530667 92.586667 92.586667 0 0 1-10.965333 27.605333c-15.061333 25.301333-40.661333 42.154667-73.642667 42.154667-77.653333 0-108.117333-38.101333-146.261333-133.504C169.216 740.693333 157.013333 725.461333 128 725.461333v-85.333333c77.653333 0 108.117333 38.101333 146.261333 133.504 25.856 64.597333 38.058667 79.786667 67.072 79.786667 0-12.373333-0.170667-23.296-0.512-38.144-0.853333-34.816-0.938667-41.941333 0.554667-51.2 0.64-20.352 5.888-34.773333 16.384-49.066667-95.232-20.736-159.445333-63.573333-196.309333-132.992l-13.824-32.426667C134.186667 510.848 128 467.072 128 416.426667c0-58.24 17.749333-110.336 50.944-153.856-10.368-41.386667-8.96-91.989333 13.909333-149.077334l7.466667-18.688 19.2-6.101333c2.56-0.853333 5.632-1.578667 9.301333-2.133333 37.290667-5.888 90.325333 8.106667 159.701334 52.48a565.930667 565.930667 0 0 1 127.274666-14.208c38.741333 0 77.226667 3.882667 114.048 11.605333 67.456-42.24 119.04-55.509333 155.306667-49.92 3.626667 0.597333 6.741333 1.322667 9.258667 2.133333l19.285333 6.101334 7.466667 18.773333c20.010667 50.218667 23.424 96.469333 16.128 136.96C875.434667 296.32 896 352.597333 896 416.512c0 53.888-3.84 94.378667-14.933333 133.802667l-11.733334 32.170666c-30.677333 69.333333-98.304 112.64-202.538666 133.248 10.837333 15.018667 15.872 30.250667 15.872 52.394667v42.666667l-0.042667 42.666666a13.013333 13.013333 0 0 0 0.341333 2.730667L682.666667 938.794667c-36.352 0-63.36-17.706667-76.672-45.653334a88.277333 88.277333 0 0 1-8.661334-40.277333v-84.736c0-3.584-0.128-3.797333-8.832-12.501333-23.296-23.296-33.834667-40.874667-33.834666-72.832v-38.613334l38.4-3.84c114.346667-11.52 176.512-43.221333 197.12-89.6l9.6-26.325333c7.68-27.562667 10.88-61.098667 10.88-107.946667 0-49.706667-17.365333-90.837333-50.218667-123.648L742.4 274.773333l7.381333-24.448c6.528-21.717333 8.106667-47.402667 1.152-76.714666a158.634667 158.634667 0 0 0-3.584 0.938666c-22.826667 6.4-51.370667 20.053333-85.76 43.008l-15.658666 10.453334-18.304-4.522667a467.754667 467.754667 0 0 0-111.829334-13.269333c-42.709333 0-84.906667 5.418667-123.946666 16.042666l-19.029334 5.205334-16.256-11.136c-35.541333-24.32-65.109333-38.826667-88.746666-45.568a158.293333 158.293333 0 0 0-4.864-1.28c-8.234667 33.92-4.992 61.781333 3.413333 82.688l9.984 25.088-18.346667 19.797333C228.693333 332.629333 213.333333 370.986667 213.333333 416.512c0 41.685333 4.864 76.202667 13.824 102.229333l11.178667 26.453334c27.904 52.352 87.168 83.84 192.853333 95.146666l38.144 4.096v38.357334c0 32-10.538667 49.536-33.834666 72.832-8.704 8.704-8.832 8.96-8.832 12.501333l-0.725334 7.893333c-0.512 2.56-0.512 9.258667 0.170667 37.205334 0.298667 12.8 0.469333 22.997333 0.554667 33.621333a33.962667 33.962667 0 0 1 0.725333 6.656z"/>
+  </svg>
+ </a>
+
+    
+    
+    <a href="mailto:2331627921@qq.com" aria-label="Email">
+  <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <path d="M513.78 602.99c-27.28 0.45-53.79-9.09-74.53-26.83l-65.96-56.64c-15.64-13.37-17.48-36.9-4.1-52.54 13.38-15.65 36.9-17.48 52.54-4.1l65.96 56.64c13.68 11.1 33.27 11.1 46.95 0L881.2 253.08l-708.02-2.61c-20.58 0-37.26-16.69-37.26-37.26s16.68-37.26 37.26-37.26H881.2c41.09-2.36 76.32 29.05 78.67 70.14a74.519 74.519 0 0 1-32.46 65.87L580.86 578.38a111.842 111.842 0 0 1-67.08 24.61z m444.57 133.4V438.28c0-20.58-16.68-37.26-37.26-37.26s-37.26 16.69-37.26 37.26V736.4c0 20.58-16.68 37.26-37.26 37.26h-521.7c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h521.7c61.72 0.01 111.78-50.05 111.78-111.79zM362.12 363.75c0-20.58-16.68-37.26-37.26-37.26h-223.6c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h223.59c20.58 0.01 37.27-16.68 37.27-37.26z m0 298.12c0-20.58-16.68-37.26-37.26-37.26h-111.8c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h111.79c20.58 0 37.27-16.69 37.27-37.26z"/>
+  </svg>
+</a>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  <p>
+    <br>
+  <p id="hitokoto">:D 获取中...</p>
+  <script src="https://v1.hitokoto.cn/?c=a&encode=js&select=%23hitokoto" defer></script>
+  <br>
+  <p class="center font">
+    &copy - <a href="http://example.com">UndertaK33r</a> -  2025 - Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/pcrab/hexo-theme-quark"> Quark </a> 
+  </p>
+  
+  <br />
+</foot>
+  
+  <!-- particles.js 初始化脚本 -->
+  <script>
+    // particles.js 配置 - 适度增强粒子效果
+    particlesJS('particles-js', {
+      "particles": {
+        "number": {
+          "value": 55,  /* 适度增加粒子数量 */
+          "density": {
+            "enable": true,
+            "value_area": 1000  /* 适度增加密度 */
+          }
+        },
+        "color": {
+          "value": "#7dd3fc"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          }
+        },
+        "opacity": {
+          "value": 0.45,  /* 提高透明度，增强可见度 */
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 0.8,  /* 适度加快透明度变化 */
+            "opacity_min": 0.1,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 2,  /* 适度增大粒子尺寸 */
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 1.2,  /* 加快大小变化 */
+            "size_min": 0.3,
+            "sync": false
+          }
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 130,  /* 增加连接距离，更容易形成网络 */
+          "color": "#7dd3fc",
+          "opacity": 0.25,  /* 适度提高连接线透明度 */
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 1.2,  /* 适度加快移动速度 */
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false,
+            "rotateX": 600,
+            "rotateY": 1200
+          }
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "grab"  /* 保持鼠标交互 */
+          },
+          "onclick": {
+            "enable": true,  /* 重新启用点击交互，增加互动性 */
+            "mode": "push"
+          },
+          "resize": true
+        },
+        "modes": {
+          "grab": {
+            "distance": 150,  /* 增加抓取距离 */
+            "line_linked": {
+              "opacity": 0.5  /* 抓取时线条更明显 */
+            }
+          },
+          "bubble": {
+            "distance": 100,
+            "size": 40,
+            "duration": 2,
+            "opacity": 8,
+            "speed": 3
+          },
+          "repulse": {
+            "distance": 200,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 3  /* 点击时添加3个粒子 */
+          },
+          "remove": {
+            "particles_nb": 2
+          }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
+</body>
+
+</html>

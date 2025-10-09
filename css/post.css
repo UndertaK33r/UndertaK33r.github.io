@@ -1,0 +1,373 @@
+#waline {
+  --waline-theme-color: #b64444;
+  --waline-active-color: #d14e4e;
+}
+post a {
+  color: #7dd3fc; /* 统一使用蓝色系 */
+  transition: all 0.3s ease;
+}
+post a:hover {
+  color: #38bdf8;
+  text-shadow: 0 0 8px rgba(125,211,252,0.4);
+}
+.post_title {
+  font-weight: bold;
+  font-size: 2.3rem;
+  text-align: center;
+  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin: 2rem 0 1rem 0;
+  position: relative;
+  transition: all 0.3s ease;
+/* 悬停效果 */
+}
+.post_title:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+.post_title:after {
+  content: '';
+  display: block;
+  margin: 0.2rem auto 0;
+  width: 15rem;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #7dd3fc, transparent); /* 统一使用蓝色系渐变 */
+  animation: titleUnderline 3s ease-in-out infinite;
+}
+#post_content {
+  font-size: 1.1rem; /* 稍微减小字号 */
+  line-height: 1.8; /* 增加行高，提高可读性 */
+  color: #e2e8f0; /* 提高文字对比度 */
+/* 表格样式美化 */
+/* 强调元素样式 - 朴素设计 */
+/* 分割线样式 - 简化设计 */
+}
+#post_content img {
+  margin: 1rem auto;
+  max-width: 90%; /* 增加图片尺寸 */
+  display: block; /* 居中显示 */
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+}
+#post_content img:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+#post_content p {
+  margin-bottom: 1.2rem;
+  line-height: 1.8;
+}
+#post_content table {
+  width: 100%;
+  margin: 2rem 0;
+  background: rgba(30,41,59,0.6);
+  backdrop-filter: blur(15px);
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+#post_content table th {
+  background: linear-gradient(135deg, rgba(125,211,252,0.2) 0%, rgba(56,189,248,0.1) 100%);
+  color: #7dd3fc;
+  font-weight: bold;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid rgba(125,211,252,0.3);
+  position: relative;
+}
+#post_content table th::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #7dd3fc, transparent);
+}
+#post_content table td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: #e2e8f0;
+  transition: all 0.3s ease;
+}
+#post_content table tr:hover td {
+  background: rgba(125,211,252,0.05);
+  color: #f1f5f9;
+}
+#post_content table tr:last-child td {
+  border-bottom: none;
+}
+#post_content strong {
+  color: #7dd3fc;
+  font-weight: 600;
+/* 移除发光效果，保持简洁 */
+}
+#post_content em {
+  color: #38bdf8;
+  font-style: italic;
+}
+#post_content hr {
+  border: none;
+  height: 1px; /* 更细的线条 */
+  background: rgba(125,211,252,0.3); /* 更微妙的色彩 */
+  margin: 2rem 0;
+/* 移除装饰符号，保持简洁 */
+}
+/* 标题样式优化 - 适配黑色主题 - 朴素设计 */
+h1 {
+  font-weight: bold;
+  font-size: 2rem;
+  color: #f1f5f9; /* 改为纯色文字 */
+  margin: 2rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid rgba(125,211,252,0.3); /* 简单的下边框 */
+}
+h2 {
+  font-weight: bold;
+  font-size: 1.8rem;
+  color: #e2e8f0;
+  border-left: 3px solid #7dd3fc; /* 稍微细一些 */
+  padding-left: 1rem;
+  margin: 1.8rem 0 1rem 0;
+}
+h3 {
+  font-weight: bold;
+  font-size: 1.6rem;
+  color: #cbd5e1;
+  position: relative;
+  margin: 1.5rem 0 1rem 0;
+}
+/* 简化 h3 装饰 */
+h3::before {
+  content: '▸'; /* 更简单的箭头 */
+  color: #7dd3fc;
+  margin-right: 0.5rem;
+  font-size: 0.8em;
+}
+h4 {
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: #94a3b8;
+  margin: 1.2rem 0 0.8rem 0;
+}
+.busuanzi {
+  font-weight: bold;
+}
+/* Hexo highlight.js 支持 - 深色主题 - 朴素设计 */
+#post_content pre,
+#post_content .highlight {
+  margin: 1.5rem 0;
+  padding: 0;
+  background: rgba(15,23,42,0.8) !important;
+  border: 1px solid rgba(125,211,252,0.2); /* 更微妙的边框 */
+  border-radius: 8px; /* 更小的圆角 */
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2); /* 更轻微的阴影 */
+  transition: all 0.3s ease;
+/* 移除彩虹装饰条，改为简单的顶部线条 */
+/* 移除内发光动画 */
+}
+#post_content pre::before,
+#post_content .highlight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #7dd3fc; /* 简单的蓝色线条 */
+  opacity: 0.6;
+}
+#post_content pre:hover,
+#post_content .highlight:hover {
+  border-color: rgba(125,211,252,0.4);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+/* Hexo生成的代码块结构 */
+#post_content .highlight table {
+  margin: 0;
+  width: 100%;
+  border-collapse: collapse;
+}
+#post_content .highlight td {
+  padding: 0;
+  border: none;
+}
+#post_content .highlight .gutter {
+  background: rgba(30,41,59,0.9); /* 深色行号区背景 */
+  border-right: 1px solid rgba(255,255,255,0.1);
+  padding: 0;
+  width: 40px;
+  text-align: center;
+}
+#post_content .highlight .gutter pre {
+  background: transparent;
+  margin: 0;
+  padding: 20px 5px;
+  color: #64748b; /* 浅灰色行号 */
+  font-size: 13px;
+  line-height: 1.5;
+}
+#post_content .highlight .code {
+  background: rgba(15,23,42,0.6); /* 代码区背景 */
+  padding: 0;
+}
+#post_content .highlight .code pre {
+  background: transparent;
+  margin: 0;
+  padding: 20px;
+  color: #f1f5f9 !important; /* 浅色代码文字 */
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+/* 传统代码块样式 - 深色主题 - 朴素设计 */
+#post_content pre {
+  background: rgba(15,23,42,0.8) !important;
+  border: 1px solid rgba(125,211,252,0.2);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  padding: 20px;
+  color: #f1f5f9 !important;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-x: auto;
+  margin: 0;
+  position: relative;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+/* 简单的顶部线条 */
+}
+#post_content pre::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #7dd3fc;
+  opacity: 0.6;
+}
+#post_content pre:hover {
+  border-color: rgba(125,211,252,0.4);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+#post_content pre code {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+/* 行内代码样式 - 深色主题 */
+#post_content p code,
+#post_content li code,
+#post_content h1 code,
+#post_content h2 code,
+#post_content h3 code,
+#post_content h4 code {
+  background: rgba(125,211,252,0.15) !important; /* 蓝色半透明背景 */
+  color: #7dd3fc !important; /* 亮蓝色文字 */
+  padding: 3px 8px !important;
+  border-radius: 6px !important;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+  font-size: 0.9em !important;
+  border: 1px solid rgba(125,211,252,0.3) !important;
+  margin: 0 !important;
+  font-weight: 500 !important;
+  backdrop-filter: blur(5px);
+}
+/* 语法高亮样式 - 深色主题配色 */
+.hljs-comment,
+.hljs-quote {
+  color: #64748b; /* 浅灰色注释 */
+  font-style: italic;
+}
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #f472b6; /* 亮粉色关键字 */
+  font-weight: bold;
+}
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #fbbf24; /* 金黄色数字 */
+}
+.hljs-string,
+.hljs-doctag {
+  color: #34d399; /* 绿色字符串 */
+}
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #60a5fa; /* 蓝色标题 */
+  font-weight: bold;
+}
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #a78bfa; /* 紫色类型 */
+}
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #22d3ee; /* 青色标签 */
+}
+.hljs-regexp,
+.hljs-link {
+  color: #fb7185; /* 红色正则 */
+}
+.hljs-symbol,
+.hljs-bullet {
+  color: #fb923c; /* 橙色符号 */
+}
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #38bdf8; /* 亮蓝色内置函数 */
+}
+.hljs-meta {
+  color: #64748b; /* 灰色元数据 */
+}
+.hljs-deletion {
+  background: rgba(239,68,68,0.2); /* 红色删除背景 */
+}
+.hljs-addition {
+  background: rgba(34,197,94,0.2); /* 绿色添加背景 */
+}
+.hljs-emphasis {
+  font-style: italic;
+}
+.hljs-strong {
+  font-weight: bold;
+}
+/* 响应式设计 */
+@media (max-width: 768px) {
+  #post_content pre,
+  #post_content .highlight {
+    margin: 1rem 0;
+    border-radius: 4px;
+  }
+  #post_content .highlight .gutter pre,
+  #post_content .highlight .code pre,
+  #post_content pre {
+    padding: 15px !important;
+    font-size: 13px !important;
+  }
+}

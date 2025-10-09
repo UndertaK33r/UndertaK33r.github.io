@@ -1,0 +1,133 @@
+#page_content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #e2e8f0;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0; /* 移除内边距，避免双重方框 */
+/* 移除卡片化设计，避免与body的方框冲突 */
+/* 保持简洁的内容展示 */
+/* 保留左侧装饰线条，作为微妙的视觉引导 */
+  position: relative;
+/* 列表美化 */
+/* 引用块美化 */
+/* 分割线美化 */
+/* 段落间距 */
+}
+#page_content::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 50%, #06b6d4 100%);
+  border-radius: 2px;
+}
+#page_content h1 {
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #f1f5f9;
+  margin: 0 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(125,211,252,0.3);
+/* emoji 特殊处理 */
+}
+#page_content h1 + p {
+  margin-top: 0;
+}
+#page_content h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #e2e8f0;
+  margin: 2rem 0 1rem 0;
+  border-left: 4px solid #7dd3fc;
+  padding-left: 1rem;
+}
+#page_content h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #cbd5e1;
+  margin: 1.5rem 0 1rem 0;
+  position: relative;
+}
+#page_content h3::before {
+  content: '▸';
+  color: #7dd3fc;
+  margin-right: 0.5rem;
+  font-size: 0.8em;
+}
+#page_content a {
+  font-size: 1.1rem;
+  color: #7dd3fc;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border-bottom: 1px solid transparent;
+}
+#page_content a:hover {
+  color: #38bdf8;
+  border-bottom-color: #38bdf8;
+  transform: translateY(-1px);
+}
+#page_content ul {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+#page_content ul li {
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+#page_content ul li::marker {
+  color: #7dd3fc;
+}
+#page_content blockquote {
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  background: rgba(125,211,252,0.1);
+  border-left: 4px solid #7dd3fc;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: #cbd5e1;
+}
+#page_content hr {
+  border: none;
+  height: 1px;
+  background: rgba(125,211,252,0.3);
+  margin: 2rem 0;
+}
+#page_content p {
+  margin-bottom: 1.2rem;
+  line-height: 1.8;
+}
+/* 响应式优化 */
+@media (max-width: 768px) {
+  #page_content {
+    margin: 1rem;
+/* 小屏幕时调整装饰线位置 */
+  }
+  #page_content::before {
+    left: -15px;
+    width: 2px;
+  }
+  #page_content h1 {
+    font-size: 1.8rem;
+  }
+  #page_content h2 {
+    font-size: 1.5rem;
+  }
+  #page_content h3 {
+    font-size: 1.3rem;
+  }
+}
+@media (max-width: 480px) {
+  #page_content {
+    margin: 0.5rem;
+/* 超小屏幕时隐藏装饰线，避免布局问题 */
+  }
+  #page_content::before {
+    display: none;
+  }
+  #page_content h1 {
+    font-size: 1.6rem;
+  }
+}
