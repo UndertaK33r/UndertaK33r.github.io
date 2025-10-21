@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>
+    
+    Go语言AI实践过程（1） - 
+    Undertaker&#39;s Blog
+  </title>
+  <meta property="og:title" content="Go语言AI实践过程（1） - Undertaker&#39;s Blog" />
+  <meta property="og:site_name" content="Undertaker&#39;s Blog" />
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  
+
+  <meta property="og:type" content="article" />
+
+
+  
+  <link rel="shortcut icon" href="/mylogo.ico" />
+  
+
+  
+
+  
+  <link rel="canonical" href="https://undertak33r.github.io/2025/09/26/Go%E8%AF%AD%E8%A8%80AI%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B%EF%BC%881%EF%BC%89/">
+  <meta name="og:url" content="https://undertak33r.github.io/2025/09/26/Go%E8%AF%AD%E8%A8%80AI%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B%EF%BC%881%EF%BC%89/">
+  
+  <!-- 现代化字体加载 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- particles.js 库 -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+<body>
+  <!-- particles.js 粒子系统容器 -->
+  <div id="particles-js"></div>
+  
+  <div class="title">
+  <img class="title_img" alt="Title image" width="300" height="300" src="/images/mylogo.jpg" /><br>
+  <div id="site_title">Undertaker's Blog</div>
+</div>
+  <div class="navi">
+  <a id="navi_item_title" href="/#" class="menu-item-link">
+    主页
+  </a>
+  <a id="navi_item_tags" href="/tags" class="menu-item-link">
+    标签
+  </a>
+  <a id="navi_item_about" href="/about" class="menu-item-link">
+    关于
+  </a>
+  <a id="navi_item_search" href="/search" class="menu-item-link">
+    搜索
+  </a>
+  
+</div>
+
+<hr />
+
+  <div class="main">
+    
+<link rel="stylesheet" href="/css/post.css">
+
+<post>
+
+  <div class="post_title">
+    Go语言AI实践过程（1）
+  </div>
+
+  <br /><br />
+
+  <div id="post_content">
+    <p>当下最为流行的项目就是AI相关的项目，我也对写一个AI项目充满了兴趣。毕竟old的业务不是老掉牙，就是结构一层套一层到让人看得头晕。Python和Java写AI项目的教程很多，配套的轮子也很多，但致力于成为Go语言练习生的我更热爱Go语言。所以我要从连接到AI开始，一步步的开发自己的智能体，并在过程中学习AI。</p>
+<p>首先，我们从使用上简单的qwen开始。因为百炼有有相关文档，所以直接上手。</p>
+<p>首先在环境变量里面配置一下你的百炼的token</p>
+<p>接下来运行一下代码</p>
+<h3 id="初次尝试"><a href="#初次尝试" class="headerlink" title="初次尝试"></a>初次尝试</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;bytes&quot;</span><br>	<span class="hljs-string">&quot;encoding/json&quot;</span><br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;io&quot;</span><br>	<span class="hljs-string">&quot;log&quot;</span><br>	<span class="hljs-string">&quot;net/http&quot;</span><br>	<span class="hljs-string">&quot;os&quot;</span><br>)<br><br><span class="hljs-keyword">type</span> Message <span class="hljs-keyword">struct</span> &#123;<br>	Role    <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;role&quot;`</span><br>	Content <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;content&quot;`</span><br>&#125;<br><span class="hljs-keyword">type</span> RequestBody <span class="hljs-keyword">struct</span> &#123;<br>	Model    <span class="hljs-type">string</span>    <span class="hljs-string">`json:&quot;model&quot;`</span><br>	Messages []Message <span class="hljs-string">`json:&quot;messages&quot;`</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 创建 HTTP 客户端</span><br>	client := &amp;http.Client&#123;&#125;<br>	<span class="hljs-comment">// 构建请求体</span><br>	requestBody := RequestBody&#123;<br>		<span class="hljs-comment">// 模型列表：https://help.aliyun.com/zh/model-studio/getting-started/models</span><br>		Model: <span class="hljs-string">&quot;qwen-plus&quot;</span>,<br>		Messages: []Message&#123;<br>			&#123;<br>				Role:    <span class="hljs-string">&quot;system&quot;</span>,<br>				Content: <span class="hljs-string">&quot;你是一个编程领域专家，擅长go语言&quot;</span>,<br>			&#125;,<br>			&#123;<br>				Role:    <span class="hljs-string">&quot;user&quot;</span>,<br>				Content: <span class="hljs-string">&quot;你是什么领域专家？&quot;</span>,<br>			&#125;,<br>		&#125;,<br>	&#125;<br>	jsonData, err := json.Marshal(requestBody)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>	&#125;<br>	<span class="hljs-comment">// 创建 POST 请求</span><br>	<span class="hljs-comment">// 以下是北京地域base_url，如果使用新加坡地域的模型，需要将base_url替换为：https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions</span><br>	req, err := http.NewRequest(<span class="hljs-string">&quot;POST&quot;</span>, <span class="hljs-string">&quot;https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions&quot;</span>, bytes.NewBuffer(jsonData))<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>	&#125;<br>	<span class="hljs-comment">// 设置请求头</span><br>	<span class="hljs-comment">// 若没有配置环境变量，请用阿里云百炼API Key将下行替换为：apiKey := &quot;sk-xxx&quot;</span><br>	apiKey := os.Getenv(<span class="hljs-string">&quot;DASHSCOPE_API_KEY&quot;</span>) <span class="hljs-comment">//系统配置的环境变量在这里</span><br>	req.Header.Set(<span class="hljs-string">&quot;Authorization&quot;</span>, <span class="hljs-string">&quot;Bearer &quot;</span>+apiKey)<br>	req.Header.Set(<span class="hljs-string">&quot;Content-Type&quot;</span>, <span class="hljs-string">&quot;application/json&quot;</span>)<br>	<span class="hljs-comment">// 发送请求</span><br>	resp, err := client.Do(req)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>	&#125;<br>	<span class="hljs-keyword">defer</span> resp.Body.Close()<br>	<span class="hljs-comment">// 读取响应体</span><br>	bodyText, err := io.ReadAll(resp.Body)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>	&#125;<br>	<span class="hljs-comment">// 打印响应内容</span><br>	fmt.Printf(<span class="hljs-string">&quot;%s\n&quot;</span>, bodyText)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>{“choices”:[{“message”:{“role”:”assistant”,”content”:”我是编程领域的专家，尤其擅长 Go 语言（Golang）。我能够帮助你编写、调试和优化 Go 代码，理解并发编程（goroutines、channels）、标准库使用、Web 开发（如 Gin、Echo 框架）、微服务架构、性能调优、错误处理等。此外，我也熟悉常见的软件工程实践，如单元测试、接口设计、依赖管理（Go Modules）等。\n\n如果你有任何关于 Go 或其他编程相关的问题，欢迎随时提问！”},”finish_reason”:”stop”,”index”:0,”logprobs”:null}],”object”:”chat.completion”,”usage”:{“prompt_tokens”:27,”completion_tokens”:103,”total_tokens”:130,”prompt_tokens_details”:{“cached_tokens”:0}},”created”:1758894490,”system_fingerprint”:null,”model”:”qwen-plus”,”id”:”chatcmpl-46e65f1a-c26a-4706-bada-7d366e6e6089”}</p>
+</blockquote>
+<p>从这里不难看出，大模型的基础调用十分的简单，等于一个http请求。把要调用的模型和消息封装成json格式然后编码http请求，然后发送给百炼的api接口。</p>
+<p>当然，现在来说，和AI的对话只能单次进行，不能进行多轮对话，每次进行一次回答之后，AI就直接忘记刚刚的回复，现在要维护一个消息队列来存储和AI的对话信息。</p>
+<p>当然了，在实现这个功能之前，我们需要把前面用到的东西封装一下，返回的结果也封装一下，方便展示。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;bytes&quot;</span><br>	<span class="hljs-string">&quot;context&quot;</span><br>	<span class="hljs-string">&quot;encoding/json&quot;</span><br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;net/http&quot;</span><br>	<span class="hljs-string">&quot;os&quot;</span><br>	<span class="hljs-string">&quot;sync&quot;</span><br>	<span class="hljs-string">&quot;time&quot;</span><br>)<br><br><span class="hljs-keyword">type</span> Message <span class="hljs-keyword">struct</span> &#123;<br>	Role    <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;role&quot;`</span><br>	Content <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;content&quot;`</span><br>&#125;<br><span class="hljs-keyword">type</span> Request <span class="hljs-keyword">struct</span> &#123;<br>	Model    <span class="hljs-type">string</span>    <span class="hljs-string">`json:&quot;model&quot;`</span><br>	Messages []Message <span class="hljs-string">`json:&quot;messages&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Response <span class="hljs-keyword">struct</span> &#123; <span class="hljs-comment">//封装返回结果</span><br>	Choices []<span class="hljs-keyword">struct</span> &#123;<br>		Message <span class="hljs-keyword">struct</span> &#123;<br>			<span class="hljs-comment">//Role    string `json:&quot;role&quot;` // 系统角色不太需要展示,但也先装起来</span><br>			Content <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;content&quot;`</span><br>		&#125; <span class="hljs-string">`json:&quot;message&quot;`</span><br>	&#125; <span class="hljs-string">`json:&quot;choices&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Agent <span class="hljs-keyword">struct</span> &#123; <span class="hljs-comment">// 把Agent 封装成结构体</span><br>	model    <span class="hljs-type">string</span><br>	apiKey   <span class="hljs-type">string</span><br>	baseURL  <span class="hljs-type">string</span><br>	messages []Message<br>	size     <span class="hljs-type">int</span><br>	mutex    sync.Mutex<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">initAngent</span><span class="hljs-params">(url, apiKey, model, prompt <span class="hljs-type">string</span>, size <span class="hljs-type">int</span>)</span></span> *Agent &#123;<br>	message := Message&#123;Role: <span class="hljs-string">&quot;system&quot;</span>, Content: prompt&#125;<br>	agent := &amp;Agent&#123;<br>		model:    model,  <span class="hljs-comment">//&quot;qwen-plus&quot;,</span><br>		apiKey:   apiKey, <span class="hljs-comment">//os.Getenv(&quot;DASHSCOPE_API_KEY&quot;),</span><br>		baseURL:  url,    <span class="hljs-comment">//&quot;https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions&quot;,</span><br>		messages: []Message&#123;message&#125;,<br>		size:     size,<br>		mutex:    sync.Mutex&#123;&#125;,<br>	&#125;<br>	<span class="hljs-keyword">return</span> agent<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(a *Agent)</span></span> Chat(ctx context.Context, message Message) (*Response, <span class="hljs-type">error</span>) &#123;<br>	a.mutex.Lock()<span class="hljs-comment">//本次的main没有用到锁的作用，但是如果在测试时候想试试异步处理，那么这里的锁就有用了</span><br>	<span class="hljs-keyword">defer</span> a.mutex.Unlock()<br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(a.messages) &gt; a.size &#123;<br>		a.messages = <span class="hljs-built_in">append</span>(a.messages[<span class="hljs-number">0</span>:<span class="hljs-number">1</span>], <span class="hljs-built_in">append</span>(a.messages[<span class="hljs-built_in">len</span>(a.messages)-a.size:], message)...)<br>	&#125; <span class="hljs-keyword">else</span> &#123;<br>		a.messages = <span class="hljs-built_in">append</span>(a.messages, message)<br>	&#125;<br>	request := Request&#123;<br>		Model:    a.model,<br>		Messages: a.messages,<br>	&#125;<br>	jsonData, err := json.Marshal(request)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	req, err := http.NewRequestWithContext(ctx, <span class="hljs-string">&quot;POST&quot;</span>, a.baseURL, bytes.NewBuffer(jsonData))<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	req.Header.Set(<span class="hljs-string">&quot;Content-Type&quot;</span>, <span class="hljs-string">&quot;application/json&quot;</span>)<br>	req.Header.Set(<span class="hljs-string">&quot;Authorization&quot;</span>, <span class="hljs-string">&quot;Bearer &quot;</span>+a.apiKey)<br>	req.Header.Set(<span class="hljs-string">&quot;X-DashScope-SSE&quot;</span>, <span class="hljs-string">&quot;enable&quot;</span>) <span class="hljs-comment">//流式输出</span><br><br>	client := &amp;http.Client&#123;&#125;<br>	resp, err := client.Do(req)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	<span class="hljs-keyword">defer</span> resp.Body.Close()<br><br>	<span class="hljs-keyword">var</span> response Response<br><br>	<span class="hljs-keyword">if</span> err = json.NewDecoder(resp.Body).Decode(&amp;response); err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br><br>	<span class="hljs-comment">// 如果有返回内容，更新消息队列</span><br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(response.Choices) &gt; <span class="hljs-number">0</span> &#123;<br>		reply := response.Choices[<span class="hljs-number">0</span>].Message.Content<br>		a.messages = <span class="hljs-built_in">append</span>(a.messages,<br>			Message&#123;Role: <span class="hljs-string">&quot;assistant&quot;</span>, Content: reply&#125;,<br>		)<br>	&#125;<br>	<span class="hljs-keyword">return</span> &amp;response, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	url := <span class="hljs-string">&quot;https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions&quot;</span><br>	apiKey := os.Getenv(<span class="hljs-string">&quot;DASHSCOPE_API_KEY&quot;</span>)<br>	agent := initAngent(url, apiKey, <span class="hljs-string">&quot;qwen-plus&quot;</span>, <span class="hljs-string">&quot;你是一个语言简洁干练助手，话不多&quot;</span>, <span class="hljs-number">10</span>) <span class="hljs-comment">//省点token😀</span><br>	message := Message&#123;Role: <span class="hljs-string">&quot;user&quot;</span>, Content: <span class="hljs-string">&quot;暗号是：undertaker&quot;</span>&#125;<br>	message2 := Message&#123;Role: <span class="hljs-string">&quot;user&quot;</span>, Content: <span class="hljs-string">&quot;我们的暗号是什么？&quot;</span>&#125;<br>	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(time.Second*<span class="hljs-number">10</span>))<br><br>	r1, _ := agent.Chat(ctx, message)<br>	fmt.Printf(<span class="hljs-string">&quot;AI第一次回答：&#123;%s&#125; \n&quot;</span>, r1.Choices)<br><br>	r2, _ := agent.Chat(ctx, message2)<br>	fmt.Printf(<span class="hljs-string">&quot;AI第二次回答：&#123;%s&#125; \n&quot;</span>, r2.Choices)<br>	cancel()<br>	<span class="hljs-keyword">for</span> _, message := <span class="hljs-keyword">range</span> agent.messages &#123;<br>		fmt.Printf(<span class="hljs-string">&quot;message: %s \n&quot;</span>, message)<br>	&#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p>这里等于我们把之前对话的内容一起和新的提问发送给模型了。<br>是这种形式</p>
+<blockquote>
+<p>{“role”: “assistant”, “content”: 初始化时候自己填入的提示这里是”你是一个语言简洁干练助手，话不多”}<br>{“role”: “user”, “content”: “暗号是：undertaker”}<br>{“role”: “assistant”, “content”: “收到”}<br>{“role”: “user”, “content”: “我们的暗号是什么？”}<br>{“role”: “assistant”, “content”: “我们的暗号是：undertaker”}</p>
+</blockquote>
+<p>从形式上来看就像是一个对话，但是实际上，每次对话是独立的只是把前面的对话作为信息告诉ai了</p>
+<p>不过在一个结构体里面维护所有消息会占用大量的内存，虽然我在里面设置了结构体的可以存储消息的数量，但这也不过是治标不治本。同时，我们这个结构体它是一个全局变量，如果说我们要把这个服务给所有人用，那么不同的人发送不同的消息会串台。再加上就是这里的信息在重启后就全部丢失。</p>
+<p>所以我们要对这里的逻辑进行优化，而很明显，消息的格式是一个json格式，所以我们使用mongoDB来实现数据的持久化同时加上聊天队列区分的效果。<br>在此之前要熟悉一下go操作mongoDB。</p>
+
+  </div>
+
+  <br />
+
+  
+  <br /><br />
+
+
+  
+
+<div id="copyright">
+
+  <a id="license-image" rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img height="15" width="80" alt="知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" />
+  </a>
+
+  <p id="license-word-hyper">
+    本作品采用
+    <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+    知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    进行许可。
+  </p>
+</div>
+
+  <div id="top">
+  <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</div>
+  <div onclick="document.getElementById('footer').scrollIntoView({behavior: 'smooth'})">▼</div>
+</div>
+  
+
+</post>
+  </div>
+
+  <foot id="footer">
+  <hr class="boldline" />
+  <br>
+
+  <p class="center font">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/UndertaK33r" aria-label="GitHub">
+  <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+   <path class="icon_path" d="M427.392 853.504a61.44 61.44 0 0 1-1.450667 15.530667 92.586667 92.586667 0 0 1-10.965333 27.605333c-15.061333 25.301333-40.661333 42.154667-73.642667 42.154667-77.653333 0-108.117333-38.101333-146.261333-133.504C169.216 740.693333 157.013333 725.461333 128 725.461333v-85.333333c77.653333 0 108.117333 38.101333 146.261333 133.504 25.856 64.597333 38.058667 79.786667 67.072 79.786667 0-12.373333-0.170667-23.296-0.512-38.144-0.853333-34.816-0.938667-41.941333 0.554667-51.2 0.64-20.352 5.888-34.773333 16.384-49.066667-95.232-20.736-159.445333-63.573333-196.309333-132.992l-13.824-32.426667C134.186667 510.848 128 467.072 128 416.426667c0-58.24 17.749333-110.336 50.944-153.856-10.368-41.386667-8.96-91.989333 13.909333-149.077334l7.466667-18.688 19.2-6.101333c2.56-0.853333 5.632-1.578667 9.301333-2.133333 37.290667-5.888 90.325333 8.106667 159.701334 52.48a565.930667 565.930667 0 0 1 127.274666-14.208c38.741333 0 77.226667 3.882667 114.048 11.605333 67.456-42.24 119.04-55.509333 155.306667-49.92 3.626667 0.597333 6.741333 1.322667 9.258667 2.133333l19.285333 6.101334 7.466667 18.773333c20.010667 50.218667 23.424 96.469333 16.128 136.96C875.434667 296.32 896 352.597333 896 416.512c0 53.888-3.84 94.378667-14.933333 133.802667l-11.733334 32.170666c-30.677333 69.333333-98.304 112.64-202.538666 133.248 10.837333 15.018667 15.872 30.250667 15.872 52.394667v42.666667l-0.042667 42.666666a13.013333 13.013333 0 0 0 0.341333 2.730667L682.666667 938.794667c-36.352 0-63.36-17.706667-76.672-45.653334a88.277333 88.277333 0 0 1-8.661334-40.277333v-84.736c0-3.584-0.128-3.797333-8.832-12.501333-23.296-23.296-33.834667-40.874667-33.834666-72.832v-38.613334l38.4-3.84c114.346667-11.52 176.512-43.221333 197.12-89.6l9.6-26.325333c7.68-27.562667 10.88-61.098667 10.88-107.946667 0-49.706667-17.365333-90.837333-50.218667-123.648L742.4 274.773333l7.381333-24.448c6.528-21.717333 8.106667-47.402667 1.152-76.714666a158.634667 158.634667 0 0 0-3.584 0.938666c-22.826667 6.4-51.370667 20.053333-85.76 43.008l-15.658666 10.453334-18.304-4.522667a467.754667 467.754667 0 0 0-111.829334-13.269333c-42.709333 0-84.906667 5.418667-123.946666 16.042666l-19.029334 5.205334-16.256-11.136c-35.541333-24.32-65.109333-38.826667-88.746666-45.568a158.293333 158.293333 0 0 0-4.864-1.28c-8.234667 33.92-4.992 61.781333 3.413333 82.688l9.984 25.088-18.346667 19.797333C228.693333 332.629333 213.333333 370.986667 213.333333 416.512c0 41.685333 4.864 76.202667 13.824 102.229333l11.178667 26.453334c27.904 52.352 87.168 83.84 192.853333 95.146666l38.144 4.096v38.357334c0 32-10.538667 49.536-33.834666 72.832-8.704 8.704-8.832 8.96-8.832 12.501333l-0.725334 7.893333c-0.512 2.56-0.512 9.258667 0.170667 37.205334 0.298667 12.8 0.469333 22.997333 0.554667 33.621333a33.962667 33.962667 0 0 1 0.725333 6.656z"/>
+  </svg>
+ </a>
+
+    
+    
+    <a href="mailto:2331627921@qq.com" aria-label="Email">
+  <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <path d="M513.78 602.99c-27.28 0.45-53.79-9.09-74.53-26.83l-65.96-56.64c-15.64-13.37-17.48-36.9-4.1-52.54 13.38-15.65 36.9-17.48 52.54-4.1l65.96 56.64c13.68 11.1 33.27 11.1 46.95 0L881.2 253.08l-708.02-2.61c-20.58 0-37.26-16.69-37.26-37.26s16.68-37.26 37.26-37.26H881.2c41.09-2.36 76.32 29.05 78.67 70.14a74.519 74.519 0 0 1-32.46 65.87L580.86 578.38a111.842 111.842 0 0 1-67.08 24.61z m444.57 133.4V438.28c0-20.58-16.68-37.26-37.26-37.26s-37.26 16.69-37.26 37.26V736.4c0 20.58-16.68 37.26-37.26 37.26h-521.7c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h521.7c61.72 0.01 111.78-50.05 111.78-111.79zM362.12 363.75c0-20.58-16.68-37.26-37.26-37.26h-223.6c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h223.59c20.58 0.01 37.27-16.68 37.27-37.26z m0 298.12c0-20.58-16.68-37.26-37.26-37.26h-111.8c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h111.79c20.58 0 37.27-16.69 37.27-37.26z"/>
+  </svg>
+</a>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  <p>
+    <br>
+  <p id="hitokoto">:D 获取中...</p>
+  <script src="https://v1.hitokoto.cn/?c=a&encode=js&select=%23hitokoto" defer></script>
+  <br>
+  <p class="center font">
+    &copy - <a href="https://UndertaK33r.github.io">UndertaK33r</a> -  2025 - Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/pcrab/hexo-theme-quark"> Quark </a> 
+  </p>
+  
+  <br />
+</foot>
+  
+  <!-- particles.js 初始化脚本 -->
+  <script>
+    // particles.js 配置 - 适度增强粒子效果
+    particlesJS('particles-js', {
+      "particles": {
+        "number": {
+          "value": 55,  /* 适度增加粒子数量 */
+          "density": {
+            "enable": true,
+            "value_area": 1000  /* 适度增加密度 */
+          }
+        },
+        "color": {
+          "value": "#7dd3fc"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          }
+        },
+        "opacity": {
+          "value": 0.45,  /* 提高透明度，增强可见度 */
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 0.8,  /* 适度加快透明度变化 */
+            "opacity_min": 0.1,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 2,  /* 适度增大粒子尺寸 */
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 1.2,  /* 加快大小变化 */
+            "size_min": 0.3,
+            "sync": false
+          }
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 130,  /* 增加连接距离，更容易形成网络 */
+          "color": "#7dd3fc",
+          "opacity": 0.25,  /* 适度提高连接线透明度 */
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 1.2,  /* 适度加快移动速度 */
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false,
+            "rotateX": 600,
+            "rotateY": 1200
+          }
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "grab"  /* 保持鼠标交互 */
+          },
+          "onclick": {
+            "enable": true,  /* 重新启用点击交互，增加互动性 */
+            "mode": "push"
+          },
+          "resize": true
+        },
+        "modes": {
+          "grab": {
+            "distance": 150,  /* 增加抓取距离 */
+            "line_linked": {
+              "opacity": 0.5  /* 抓取时线条更明显 */
+            }
+          },
+          "bubble": {
+            "distance": 100,
+            "size": 40,
+            "duration": 2,
+            "opacity": 8,
+            "speed": 3
+          },
+          "repulse": {
+            "distance": 200,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 3  /* 点击时添加3个粒子 */
+          },
+          "remove": {
+            "particles_nb": 2
+          }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>
+    
+    Go八股之并发编程（2） - 
+    Undertaker&#39;s Blog
+  </title>
+  <meta property="og:title" content="Go八股之并发编程（2） - Undertaker&#39;s Blog" />
+  <meta property="og:site_name" content="Undertaker&#39;s Blog" />
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  
+
+  <meta property="og:type" content="article" />
+
+
+  
+  <link rel="shortcut icon" href="/mylogo.ico" />
+  
+
+  
+
+  
+  <link rel="canonical" href="https://undertak33r.github.io/2025/09/25/Go%E5%85%AB%E8%82%A1%E4%B9%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%882%EF%BC%89/">
+  <meta name="og:url" content="https://undertak33r.github.io/2025/09/25/Go%E5%85%AB%E8%82%A1%E4%B9%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%882%EF%BC%89/">
+  
+  <!-- 现代化字体加载 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- particles.js 库 -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+<body>
+  <!-- particles.js 粒子系统容器 -->
+  <div id="particles-js"></div>
+  
+  <div class="title">
+  <img class="title_img" alt="Title image" width="300" height="300" src="/images/mylogo.jpg" /><br>
+  <div id="site_title">Undertaker's Blog</div>
+</div>
+  <div class="navi">
+  <a id="navi_item_title" href="/#" class="menu-item-link">
+    主页
+  </a>
+  <a id="navi_item_tags" href="/tags" class="menu-item-link">
+    标签
+  </a>
+  <a id="navi_item_about" href="/about" class="menu-item-link">
+    关于
+  </a>
+  <a id="navi_item_search" href="/search" class="menu-item-link">
+    搜索
+  </a>
+  
+</div>
+
+<hr />
+
+  <div class="main">
+    
+<link rel="stylesheet" href="/css/post.css">
+
+<post>
+
+  <div class="post_title">
+    Go八股之并发编程（2）
+  </div>
+
+  <br /><br />
+
+  <div id="post_content">
+    <h1 id="相关包的使用"><a href="#相关包的使用" class="headerlink" title="相关包的使用"></a>相关包的使用</h1><p>参考连接：<a target="_blank" rel="noopener" href="https://www.topgoer.com/">https://www.topgoer.com/</a></p>
+<ul>
+<li>在写这篇之前虽然看了一些包的使用，但似乎本人对于这些包的实践非常之少，以至于自己对这方面的认知非常浅薄，很容易忘记。</li>
+<li>所以接下来要忍住感觉到麻烦的心态给常用的都用一下并且记录一下</li>
+</ul>
+<h3 id="runtime"><a href="#runtime" class="headerlink" title="runtime"></a>runtime</h3><h4 id="runtime-Gosched"><a href="#runtime-Gosched" class="headerlink" title="runtime.Gosched()"></a>runtime.Gosched()</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(s <span class="hljs-type">string</span>)</span></span> &#123;<br>		<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; i++ &#123;<br>			fmt.Println(s)<br>		&#125;<br>	&#125;(<span class="hljs-string">&quot;world&quot;</span>)<br>	<span class="hljs-comment">// 主协程</span><br>	runtime.Gosched()<br>	fmt.Println(<span class="hljs-string">&quot;hello&quot;</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>首先，main函数会创建一个协程，然后调用runtime.Gosched()，这个函数会切换到其他协程，然后打印hello。<br>如果没有runtime.Gosched()，那么main协程会很快的运行完毕，可能会出现一个world也打印不出来的情况，加上后必然先打印出一个world。</p>
+<h4 id="runtime-Goexit"><a href="#runtime-Goexit" class="headerlink" title="runtime.Goexit()"></a>runtime.Goexit()</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(s <span class="hljs-type">string</span>)</span></span> &#123;<br>		<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; i++ &#123;<br>			runtime.Goexit()<br>			fmt.Println(s)<br>		&#125;<br>	&#125;(<span class="hljs-string">&quot;world&quot;</span>)<br>	time.Sleep(time.Second * <span class="hljs-number">3</span>)<br>	fmt.Println(<span class="hljs-string">&quot;hello&quot;</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>就当是这个goroutine运行完毕了，后续啥也不会干了</p>
+<h4 id="runtime-GOMAXPROCS"><a href="#runtime-GOMAXPROCS" class="headerlink" title="runtime.GOMAXPROCS()"></a>runtime.GOMAXPROCS()</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	runtime.GOMAXPROCS(<span class="hljs-number">2</span>)<br>	<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(s <span class="hljs-type">string</span>)</span></span> &#123;<br>		<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; i++ &#123;<br>			fmt.Println(s)<br>		&#125;<br>	&#125;(<span class="hljs-string">&quot;func1&quot;</span>)<br>	<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(s <span class="hljs-type">string</span>)</span></span> &#123;<br>		<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">2</span>; i++ &#123;<br>			fmt.Println(s)<br>		&#125;<br>	&#125;(<span class="hljs-string">&quot;func2&quot;</span>)<br>	time.Sleep(time.Second)<br>	fmt.Println(<span class="hljs-string">&quot;finish&quot;</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>GOMAXPROCS设置最大goroutine执行的cpu数量,很好理解，就是设置并发数</p>
+<h3 id="Sync"><a href="#Sync" class="headerlink" title="Sync"></a>Sync</h3><h4 id="WaitGroup"><a href="#WaitGroup" class="headerlink" title="WaitGroup"></a>WaitGroup</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123; <br>    <span class="hljs-keyword">var</span> wg sync.WaitGroup<br>    wg.Add(<span class="hljs-number">1</span>)<br>    <span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>        <span class="hljs-keyword">defer</span> wg.Done()<br>        fmt.Println(<span class="hljs-string">&quot;hello world&quot;</span>)<br>    &#125;<br>    wg.Wait()<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>加上后保证goroutine执行完毕</p>
+<h4 id="Mutex"><a href="#Mutex" class="headerlink" title="Mutex"></a>Mutex</h4><p>常用的有互斥锁和读写锁<br>互斥锁是完全互斥，但是经常会有读多写少的需求，我们高并发的读取不涉及修改数据，那么就可以用读写锁</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go">rwmutex := sync.RWMutex&#123;&#125;<br>mutex := sync.Mutex&#123;&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span>&#123;<br>	rwmutex.RLock()<br>	<span class="hljs-comment">//...</span><br>	<span class="hljs-keyword">defer</span> rwmutex.RUnlock()<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span>&#123;<br>	mutex.Lock()<br>	<span class="hljs-comment">//...</span><br>	<span class="hljs-keyword">defer</span> mutex.Unlock()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="Once"><a href="#Once" class="headerlink" title="Once"></a>Once</h4><p>Once保证只执行一次<br>线程安全，多个 goroutine 同时调用也不会有问题</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Once <span class="hljs-keyword">struct</span> &#123;<br>	_ noCopy<br>	done atomic.Uint32<br>	m    Mutex<br>&#125;<br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(o *Once)</span></span> Do(f <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span>)<br><span class="hljs-comment">//----------------------------------------</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">var</span> once sync.Once<br>	<span class="hljs-keyword">var</span> wg sync.WaitGroup<br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++ &#123;<br>		wg.Add(<span class="hljs-number">1</span>)<br>		<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>			<span class="hljs-keyword">defer</span> wg.Done()<br>			once.Do(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>				fmt.Println(<span class="hljs-string">&quot;我只会出现一次&quot;</span>)<br>			&#125;)<br>		&#125;()<br>	&#125;<br>	wg.Wait()<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="atomic"><a href="#atomic" class="headerlink" title="atomic"></a>atomic</h4><p>由于mutex加锁要切换到内核态，而且涉及到上下文切换，性能会下降<br>而atomic是用户态的，基于 CPU 提供的原子指令，对于常见的数据类型使用atomic操作性能更好</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> x <span class="hljs-type">int64</span><br><span class="hljs-keyword">var</span> l sync.Mutex<br><span class="hljs-keyword">var</span> wg sync.WaitGroup<br><br><span class="hljs-comment">// 普通版加函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">add</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-comment">// x = x + 1</span><br>    x++ <span class="hljs-comment">// 等价于上面的操作</span><br>    wg.Done()<br>&#125;<br><br><span class="hljs-comment">// 互斥锁版加函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">mutexAdd</span><span class="hljs-params">()</span></span> &#123;<br>    l.Lock()<br>    x++<br>    l.Unlock()<br>    wg.Done()<br>&#125;<br><br><span class="hljs-comment">// 原子操作版加函数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">atomicAdd</span><span class="hljs-params">()</span></span> &#123;<br>    atomic.AddInt64(&amp;x, <span class="hljs-number">1</span>)<br>    wg.Done()<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>    start := time.Now()<br>    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10000</span>; i++ &#123;<br>        wg.Add(<span class="hljs-number">1</span>)<br>        <span class="hljs-comment">// go add()       // 普通版add函数 不是并发安全的</span><br>        <span class="hljs-comment">// go mutexAdd()  // 加锁版add函数 是并发安全的，但是加锁性能开销大</span><br>        <span class="hljs-keyword">go</span> atomicAdd() <span class="hljs-comment">// 原子操作版add函数 是并发安全，性能优于加锁版</span><br>    &#125;<br>    wg.Wait()<br>    end := time.Now()<br>    fmt.Println(x)<br>    fmt.Println(end.Sub(start))<br>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="Worker-Pool"><a href="#Worker-Pool" class="headerlink" title="Worker Pool"></a>Worker Pool</h4><p>Worker Pool（工作池）是一种并发设计模式，它维护一组预先创建的 goroutine（工人），这些 goroutine 等待执行任务。这种模式可以控制并发数量，避免创建过多的 goroutine，提高系统性能。</p>
+<p>任务1 任务2 任务3 任务4 任务5<br>  ↓    ↓    ↓    ↓    ↓<br>————- jobs 队列 ———-<br>     ↓        ↓        ↓<br>   工人1    工人2    工人3<br>     ↓        ↓        ↓<br>————- results 队列 ——-<br>  ↓    ↓    ↓    ↓    ↓<br>处理完成，收集结果</p>
+<p>简单的 Worker Pool 实现</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;sync&quot;</span><br>	<span class="hljs-string">&quot;time&quot;</span><br>)<br><br><span class="hljs-comment">// 简单的任务结构</span><br><span class="hljs-keyword">type</span> Task <span class="hljs-keyword">struct</span> &#123;<br>	ID   <span class="hljs-type">int</span><br>	Name <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-comment">// 简单的 Worker Pool</span><br><span class="hljs-keyword">type</span> SimpleWorkerPool <span class="hljs-keyword">struct</span> &#123;<br>	workers <span class="hljs-type">int</span>            <span class="hljs-comment">// 工人数量</span><br>	tasks   <span class="hljs-keyword">chan</span> Task      <span class="hljs-comment">// 任务队列</span><br>	wg      sync.WaitGroup <span class="hljs-comment">// 等待组</span><br>&#125;<br><br><span class="hljs-comment">// 创建简单的 Worker Pool</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewSimpleWorkerPool</span><span class="hljs-params">(workers <span class="hljs-type">int</span>)</span></span> *SimpleWorkerPool &#123;<br>	<span class="hljs-keyword">return</span> &amp;SimpleWorkerPool&#123;<br>		workers: workers,<br>		tasks:   <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> Task, <span class="hljs-number">100</span>),<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 启动 Worker Pool</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(swp *SimpleWorkerPool)</span></span> Start() &#123;<br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; swp.workers; i++ &#123;<br>		swp.wg.Add(<span class="hljs-number">1</span>)<br>		<span class="hljs-keyword">go</span> swp.worker(i)<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 工人处理任务</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(swp *SimpleWorkerPool)</span></span> worker(id <span class="hljs-type">int</span>) &#123;<br>	<span class="hljs-keyword">defer</span> swp.wg.Done()<br><br>	<span class="hljs-keyword">for</span> task := <span class="hljs-keyword">range</span> swp.tasks &#123;<br>		fmt.Printf(<span class="hljs-string">&quot;Worker %d 处理任务 %d: %s\n&quot;</span>, id, task.ID, task.Name)<br>		<span class="hljs-comment">// 模拟工作耗时</span><br>		time.Sleep(time.Millisecond * <span class="hljs-number">500</span>)<br>		fmt.Printf(<span class="hljs-string">&quot;Worker %d 完成任务 %d\n&quot;</span>, id, task.ID)<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 提交任务</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(swp *SimpleWorkerPool)</span></span> Submit(task Task) &#123;<br>	swp.tasks &lt;- task<br>&#125;<br><br><span class="hljs-comment">// 关闭并等待所有任务完成</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(swp *SimpleWorkerPool)</span></span> Close() &#123;<br>	<span class="hljs-built_in">close</span>(swp.tasks)<br>	swp.wg.Wait()<br>&#125;<br><br><span class="hljs-comment">// 使用示例</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 创建一个有 3 个工人的 Worker Pool</span><br>	pool := NewSimpleWorkerPool(<span class="hljs-number">3</span>)<br>	pool.Start()<br><br>	<span class="hljs-comment">// 提交 10 个任务</span><br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">10</span>; i++ &#123;<br>		pool.Submit(Task&#123;<br>			ID:   i,<br>			Name: fmt.Sprintf(<span class="hljs-string">&quot;Task-%d&quot;</span>, i),<br>		&#125;)<br>	&#125;<br><br>	<span class="hljs-comment">// 关闭并等待所有任务完成</span><br>	pool.Close()<br>	fmt.Println(<span class="hljs-string">&quot;所有任务完成!&quot;</span>)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+<h2 id="练习"><a href="#练习" class="headerlink" title="练习"></a>练习</h2><p>练习题目：生产者-消费者模式<br>题目要求：<br>编写一个程序实现生产者-消费者模式：<br>创建一个生产者 goroutine，生成 50 个随机数（范围 1-100）<br>创建 3 个消费者 goroutine，从同一个 channel 接收并处理数据<br>每个消费者接收到数据后，打印出处理结果（例如：消费者ID + 接收到的数字）<br>主程序需要等待所有生产者和消费者完成工作后，打印”所有任务完成”<br>具体要求：<br>使用 channel 在生产者和消费者之间传递数据<br>生产者完成生产后要关闭 channel<br>消费者使用 range 从 channel 读取数据，自动感知 channel 关闭<br>使用 sync.WaitGroup 等待所有 goroutine 完成</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs go"><br><span class="hljs-keyword">var</span> (<br>	<span class="hljs-comment">//缓冲区大小可以区分生产者是疯狂生产，还是生产一部分阻塞等消费者消费之后再生产</span><br>	ch = <span class="hljs-built_in">make</span>(<span class="hljs-keyword">chan</span> <span class="hljs-type">int</span>, <span class="hljs-number">50</span>)<br>	wg sync.WaitGroup<br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">produce</span><span class="hljs-params">(c <span class="hljs-keyword">chan</span>&lt;- <span class="hljs-type">int</span>)</span></span> &#123;<br>	<span class="hljs-keyword">defer</span> wg.Done()<br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">50</span>; i++ &#123;<br>		c &lt;- rand.Intn(<span class="hljs-number">100</span>) + <span class="hljs-number">1</span><br>	&#125;<br>	<span class="hljs-built_in">close</span>(c)<span class="hljs-comment">//标记队列已关闭，不会清空缓冲区</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">consume</span><span class="hljs-params">(i &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-type">int</span>, id <span class="hljs-type">int</span>)</span></span> &#123;<br>	<span class="hljs-keyword">defer</span> wg.Done()<br>	<span class="hljs-keyword">for</span> c := <span class="hljs-keyword">range</span> i &#123;<br>		fmt.Println(<span class="hljs-string">&quot;消费者d%处理了数字：d%&quot;</span>, id, c)<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	rand.Seed(time.Now().UnixNano())<br><br>	wg.Add(<span class="hljs-number">1</span>)<br>	<span class="hljs-keyword">go</span> produce(ch)<br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">1</span>; i &lt;= <span class="hljs-number">3</span>; i++ &#123;<br>		wg.Add(<span class="hljs-number">1</span>)<br>		<span class="hljs-keyword">go</span> consume(ch, i)<br>	&#125;<br>	wg.Wait()<br>	fmt.Println(<span class="hljs-string">&quot;所有任务执行完毕&quot;</span>)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+
+<h3 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h3><p>Context 是 Go 语言标准库提供的一种上下文传递机制，用于在多个 goroutine 之间传递取消信号。Context 可以在任意层级传递，并且可以取消，也可以超时。<br>Context 的主要作用是：<br>取消（cancel）：上游通知下游“立即停止”。<br>超时（timeout&#x2F;deadline）：到点自动取消。<br>传值（value）：跨 API 边界携带请求级公共数据（如 trace-id、用户身份），避免每个函数都加参数,这在项目开发时候特别有用。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Context <span class="hljs-keyword">interface</span> &#123;<br>	Deadline() (deadline time.Time, ok <span class="hljs-type">bool</span>)<br>	Done() &lt;-<span class="hljs-keyword">chan</span> <span class="hljs-keyword">struct</span>&#123;&#125;<br>	Err() <span class="hljs-type">error</span><br>	Value(key any) any<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h4 id="接下来是一些简单的例子："><a href="#接下来是一些简单的例子：" class="headerlink" title="接下来是一些简单的例子：\"></a>接下来是一些简单的例子：\</h4><p><em>取消：</em></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;context&quot;</span><br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;time&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">temp</span><span class="hljs-params">(ctx context.Context)</span></span> &#123;<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-keyword">select</span> &#123;<br>		<span class="hljs-keyword">case</span> &lt;-ctx.Done():<br>			fmt.Println(<span class="hljs-string">&quot;任务结束&quot;</span>)<br>			<span class="hljs-keyword">return</span><br>		<span class="hljs-keyword">default</span>:<br>			time.Sleep(time.Second)<br>			fmt.Println(<span class="hljs-string">&quot;睡了一秒&quot;</span>)<br>		&#125;<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	ctx, cancel := context.WithCancel(context.Background())<br>	<span class="hljs-keyword">go</span> temp(ctx)<br>	time.Sleep(time.Second * <span class="hljs-number">5</span>)<br>	cancel()<br>	time.Sleep(time.Millisecond * <span class="hljs-number">500</span>)<span class="hljs-comment">//避免任务结束太快</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><em>超时：</em></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;context&quot;</span><br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;time&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">temp</span><span class="hljs-params">(ctx context.Context)</span></span> &#123;<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-keyword">select</span> &#123;<br>		<span class="hljs-keyword">case</span> &lt;-ctx.Done():<br>			fmt.Println(<span class="hljs-string">&quot;任务结束&quot;</span>)<br>			<span class="hljs-keyword">return</span><br>		<span class="hljs-keyword">default</span>:<br>			time.Sleep(time.Second)<br>			fmt.Println(<span class="hljs-string">&quot;睡了一秒&quot;</span>)<br>		&#125;<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	ctx, _ := context.WithDeadline(context.Background(), time.Now().Add(time.Second*<span class="hljs-number">3</span>)) <span class="hljs-comment">//或者用WithTimeout</span><br>	<span class="hljs-keyword">go</span> temp(ctx)<br>	time.Sleep(time.Second * <span class="hljs-number">5</span>)<span class="hljs-comment">//三秒时候就结束了</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><em>传值：</em></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;context&quot;</span><br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;time&quot;</span><br>)<br><br><span class="hljs-keyword">type</span> key <span class="hljs-type">string</span> <span class="hljs-comment">// 避免冲突</span><br><br><span class="hljs-keyword">const</span> traceIDKey key = <span class="hljs-string">&quot;traceID&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">worker</span><span class="hljs-params">(ctx context.Context)</span></span> &#123;<br>	<span class="hljs-keyword">if</span> v := ctx.Value(traceIDKey); v != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Printf(<span class="hljs-string">&quot;worker: 收到 traceID=%s\n&quot;</span>, v)<br>	&#125;<br>	&lt;-ctx.Done()<br>	fmt.Println(<span class="hljs-string">&quot;worker: 退出&quot;</span>)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 把 traceID 塞进 context</span><br>	ctx, cancel := context.WithCancel(context.Background())<br>	ctx = context.WithValue(ctx, traceIDKey, <span class="hljs-string">&quot;前面那个是🗡，这个是值&quot;</span>)<br>	<span class="hljs-keyword">go</span> worker(ctx)<br>	<span class="hljs-comment">// 简单等等，让 goroutine 先打印</span><br>	time.Sleep(time.Second)<br>	cancel()<br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>从上面这里例子就可以看出，context可以控制goroutine的关闭和传值，这在goroutine套goroutine的情况下非常好用，不仅可以传值，还可以一次性关闭整个goroutine树。美汁汁😛</p>
+</blockquote>
+<p>好了，到这里这篇关于 Go 并发编程的文章就差不多啦！😄<br>写这篇文章的时候我自己也重新梳理了一遍，这些小demo也是非常简短和简单，但是写一遍还是十分的helpful。起码记忆上来说有点用。</p>
+
+  </div>
+
+  <br />
+
+  
+  <br /><br />
+
+
+  
+
+<div id="copyright">
+
+  <a id="license-image" rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img height="15" width="80" alt="知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" />
+  </a>
+
+  <p id="license-word-hyper">
+    本作品采用
+    <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+    知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    进行许可。
+  </p>
+</div>
+
+  <div id="top">
+  <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</div>
+  <div onclick="document.getElementById('footer').scrollIntoView({behavior: 'smooth'})">▼</div>
+</div>
+  
+
+</post>
+  </div>
+
+  <foot id="footer">
+  <hr class="boldline" />
+  <br>
+
+  <p class="center font">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/UndertaK33r" aria-label="GitHub">
+  <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+   <path class="icon_path" d="M427.392 853.504a61.44 61.44 0 0 1-1.450667 15.530667 92.586667 92.586667 0 0 1-10.965333 27.605333c-15.061333 25.301333-40.661333 42.154667-73.642667 42.154667-77.653333 0-108.117333-38.101333-146.261333-133.504C169.216 740.693333 157.013333 725.461333 128 725.461333v-85.333333c77.653333 0 108.117333 38.101333 146.261333 133.504 25.856 64.597333 38.058667 79.786667 67.072 79.786667 0-12.373333-0.170667-23.296-0.512-38.144-0.853333-34.816-0.938667-41.941333 0.554667-51.2 0.64-20.352 5.888-34.773333 16.384-49.066667-95.232-20.736-159.445333-63.573333-196.309333-132.992l-13.824-32.426667C134.186667 510.848 128 467.072 128 416.426667c0-58.24 17.749333-110.336 50.944-153.856-10.368-41.386667-8.96-91.989333 13.909333-149.077334l7.466667-18.688 19.2-6.101333c2.56-0.853333 5.632-1.578667 9.301333-2.133333 37.290667-5.888 90.325333 8.106667 159.701334 52.48a565.930667 565.930667 0 0 1 127.274666-14.208c38.741333 0 77.226667 3.882667 114.048 11.605333 67.456-42.24 119.04-55.509333 155.306667-49.92 3.626667 0.597333 6.741333 1.322667 9.258667 2.133333l19.285333 6.101334 7.466667 18.773333c20.010667 50.218667 23.424 96.469333 16.128 136.96C875.434667 296.32 896 352.597333 896 416.512c0 53.888-3.84 94.378667-14.933333 133.802667l-11.733334 32.170666c-30.677333 69.333333-98.304 112.64-202.538666 133.248 10.837333 15.018667 15.872 30.250667 15.872 52.394667v42.666667l-0.042667 42.666666a13.013333 13.013333 0 0 0 0.341333 2.730667L682.666667 938.794667c-36.352 0-63.36-17.706667-76.672-45.653334a88.277333 88.277333 0 0 1-8.661334-40.277333v-84.736c0-3.584-0.128-3.797333-8.832-12.501333-23.296-23.296-33.834667-40.874667-33.834666-72.832v-38.613334l38.4-3.84c114.346667-11.52 176.512-43.221333 197.12-89.6l9.6-26.325333c7.68-27.562667 10.88-61.098667 10.88-107.946667 0-49.706667-17.365333-90.837333-50.218667-123.648L742.4 274.773333l7.381333-24.448c6.528-21.717333 8.106667-47.402667 1.152-76.714666a158.634667 158.634667 0 0 0-3.584 0.938666c-22.826667 6.4-51.370667 20.053333-85.76 43.008l-15.658666 10.453334-18.304-4.522667a467.754667 467.754667 0 0 0-111.829334-13.269333c-42.709333 0-84.906667 5.418667-123.946666 16.042666l-19.029334 5.205334-16.256-11.136c-35.541333-24.32-65.109333-38.826667-88.746666-45.568a158.293333 158.293333 0 0 0-4.864-1.28c-8.234667 33.92-4.992 61.781333 3.413333 82.688l9.984 25.088-18.346667 19.797333C228.693333 332.629333 213.333333 370.986667 213.333333 416.512c0 41.685333 4.864 76.202667 13.824 102.229333l11.178667 26.453334c27.904 52.352 87.168 83.84 192.853333 95.146666l38.144 4.096v38.357334c0 32-10.538667 49.536-33.834666 72.832-8.704 8.704-8.832 8.96-8.832 12.501333l-0.725334 7.893333c-0.512 2.56-0.512 9.258667 0.170667 37.205334 0.298667 12.8 0.469333 22.997333 0.554667 33.621333a33.962667 33.962667 0 0 1 0.725333 6.656z"/>
+  </svg>
+ </a>
+
+    
+    
+    <a href="mailto:2331627921@qq.com" aria-label="Email">
+  <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <path d="M513.78 602.99c-27.28 0.45-53.79-9.09-74.53-26.83l-65.96-56.64c-15.64-13.37-17.48-36.9-4.1-52.54 13.38-15.65 36.9-17.48 52.54-4.1l65.96 56.64c13.68 11.1 33.27 11.1 46.95 0L881.2 253.08l-708.02-2.61c-20.58 0-37.26-16.69-37.26-37.26s16.68-37.26 37.26-37.26H881.2c41.09-2.36 76.32 29.05 78.67 70.14a74.519 74.519 0 0 1-32.46 65.87L580.86 578.38a111.842 111.842 0 0 1-67.08 24.61z m444.57 133.4V438.28c0-20.58-16.68-37.26-37.26-37.26s-37.26 16.69-37.26 37.26V736.4c0 20.58-16.68 37.26-37.26 37.26h-521.7c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h521.7c61.72 0.01 111.78-50.05 111.78-111.79zM362.12 363.75c0-20.58-16.68-37.26-37.26-37.26h-223.6c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h223.59c20.58 0.01 37.27-16.68 37.27-37.26z m0 298.12c0-20.58-16.68-37.26-37.26-37.26h-111.8c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h111.79c20.58 0 37.27-16.69 37.27-37.26z"/>
+  </svg>
+</a>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  <p>
+    <br>
+  <p id="hitokoto">:D 获取中...</p>
+  <script src="https://v1.hitokoto.cn/?c=a&encode=js&select=%23hitokoto" defer></script>
+  <br>
+  <p class="center font">
+    &copy - <a href="https://UndertaK33r.github.io">UndertaK33r</a> -  2025 - Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/pcrab/hexo-theme-quark"> Quark </a> 
+  </p>
+  
+  <br />
+</foot>
+  
+  <!-- particles.js 初始化脚本 -->
+  <script>
+    // particles.js 配置 - 适度增强粒子效果
+    particlesJS('particles-js', {
+      "particles": {
+        "number": {
+          "value": 55,  /* 适度增加粒子数量 */
+          "density": {
+            "enable": true,
+            "value_area": 1000  /* 适度增加密度 */
+          }
+        },
+        "color": {
+          "value": "#7dd3fc"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          }
+        },
+        "opacity": {
+          "value": 0.45,  /* 提高透明度，增强可见度 */
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 0.8,  /* 适度加快透明度变化 */
+            "opacity_min": 0.1,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 2,  /* 适度增大粒子尺寸 */
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 1.2,  /* 加快大小变化 */
+            "size_min": 0.3,
+            "sync": false
+          }
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 130,  /* 增加连接距离，更容易形成网络 */
+          "color": "#7dd3fc",
+          "opacity": 0.25,  /* 适度提高连接线透明度 */
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 1.2,  /* 适度加快移动速度 */
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false,
+            "rotateX": 600,
+            "rotateY": 1200
+          }
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "grab"  /* 保持鼠标交互 */
+          },
+          "onclick": {
+            "enable": true,  /* 重新启用点击交互，增加互动性 */
+            "mode": "push"
+          },
+          "resize": true
+        },
+        "modes": {
+          "grab": {
+            "distance": 150,  /* 增加抓取距离 */
+            "line_linked": {
+              "opacity": 0.5  /* 抓取时线条更明显 */
+            }
+          },
+          "bubble": {
+            "distance": 100,
+            "size": 40,
+            "duration": 2,
+            "opacity": 8,
+            "speed": 3
+          },
+          "repulse": {
+            "distance": 200,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 3  /* 点击时添加3个粒子 */
+          },
+          "remove": {
+            "particles_nb": 2
+          }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
+</body>
+
+</html>

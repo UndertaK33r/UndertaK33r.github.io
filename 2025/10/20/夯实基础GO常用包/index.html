@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <title>
+    
+    夯实基础GO常用包 - 
+    Undertaker&#39;s Blog
+  </title>
+  <meta property="og:title" content="夯实基础GO常用包 - Undertaker&#39;s Blog" />
+  <meta property="og:site_name" content="Undertaker&#39;s Blog" />
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  
+
+  <meta property="og:type" content="article" />
+
+
+  
+  <link rel="shortcut icon" href="/mylogo.ico" />
+  
+
+  
+
+  
+  <link rel="canonical" href="https://undertak33r.github.io/2025/10/20/%E5%A4%AF%E5%AE%9E%E5%9F%BA%E7%A1%80GO%E5%B8%B8%E7%94%A8%E5%8C%85/">
+  <meta name="og:url" content="https://undertak33r.github.io/2025/10/20/%E5%A4%AF%E5%AE%9E%E5%9F%BA%E7%A1%80GO%E5%B8%B8%E7%94%A8%E5%8C%85/">
+  
+  <!-- 现代化字体加载 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- particles.js 库 -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+<meta name="generator" content="Hexo 8.0.0"></head>
+
+<body>
+  <!-- particles.js 粒子系统容器 -->
+  <div id="particles-js"></div>
+  
+  <div class="title">
+  <img class="title_img" alt="Title image" width="300" height="300" src="/images/mylogo.jpg" /><br>
+  <div id="site_title">Undertaker's Blog</div>
+</div>
+  <div class="navi">
+  <a id="navi_item_title" href="/#" class="menu-item-link">
+    主页
+  </a>
+  <a id="navi_item_tags" href="/tags" class="menu-item-link">
+    标签
+  </a>
+  <a id="navi_item_about" href="/about" class="menu-item-link">
+    关于
+  </a>
+  <a id="navi_item_search" href="/search" class="menu-item-link">
+    搜索
+  </a>
+  
+</div>
+
+<hr />
+
+  <div class="main">
+    
+<link rel="stylesheet" href="/css/post.css">
+
+<post>
+
+  <div class="post_title">
+    夯实基础GO常用包
+  </div>
+
+  <br /><br />
+
+  <div id="post_content">
+    <p>在日常开发或者实践中有许多go的包经常用到，虽然我们可以直接去（<a target="_blank" rel="noopener" href="https://pkg.go.dev/)%E6%9F%A5%E7%9C%8B%E8%87%AA%E5%B7%B1%E6%83%B3%E7%94%A8%E7%9A%84%E5%8C%85%EF%BC%8C%E4%BD%86%E6%98%AF%E4%BC%BC%E4%B9%8E%E4%B8%8D%E6%98%AF%E5%BE%88%E5%8F%8B%E5%A5%BD%E3%80%82">https://pkg.go.dev/)查看自己想用的包，但是似乎不是很友好。</a><br>另外，有时候虽然用一些包但是只是用过的话，记忆点不是很深刻，重新用的时候还是很恐惧😱，因此需要记录一下同时夯实基础😼。</p>
+<h3 id="time"><a href="#time" class="headerlink" title="time"></a>time</h3><p>time包提供了对时间的操作，比如获取当前时间、格式化时间、计算时间间隔等等。<br>在我们喜闻乐见的上下文中或者数据库定义里我们经常会用time.Time</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go">   <span class="hljs-comment">// 获取当前时间</span><br><span class="hljs-keyword">var</span> t time.Time<br>t = time.Now()<br>fmt.Println(t.Format(<span class="hljs-string">&quot;2006-01-02 15:04:05&quot;</span>))<br></code></pre></td></tr></table></figure>
+<p>可以用Year(), Month(), Day(), Hour(), Minute(), Second()等方法来获取时间的各个部分</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 获取时间的各个部分</span><br>fmt.Println(t.Year())<br>fmt.Println(t.Month())<br>fmt.Println(t.Day())<br>fmt.Println(t.Hour())<br>fmt.Println(t.Minute())<br>fmt.Println(t.Second())<br></code></pre></td></tr></table></figure>
+<p>time.Duration类型表示一个持续时间，比如1秒、500毫秒等等，最小单位是纳秒。<br>time包还提供了把int64类型的时间戳转换为time.Time的方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go">   <span class="hljs-comment">// 把int64类型时间戳转换为time.Time</span><br>timestamp := <span class="hljs-type">int64</span>(<span class="hljs-number">1620000000</span>)<br>t := time.Unix(timestamp, <span class="hljs-number">0</span>)<br>fmt.Println(t.Format(<span class="hljs-string">&quot;2006-01-02 15:04:05&quot;</span>))<br></code></pre></td></tr></table></figure>
+<p>第一个参数是秒级时间戳（自 1970 年 1 月 1 日以来的秒数）。<br>第二个参数是纳秒部分，通常如果只使用秒级时间戳可以传入 0。<br>time.Parse()方法可以解析字符串格式的时间，比如”2021-05-01 12:00:00”</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">   <span class="hljs-comment">// 解析字符串格式的时间</span><br>t, err := time.Parse(<span class="hljs-string">&quot;2006-01-02 15:04:05&quot;</span>, <span class="hljs-string">&quot;2021-05-01 12:00:00&quot;</span>)<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="strings"><a href="#strings" class="headerlink" title="strings"></a>strings</h3><p>这个包在刷算法题目时候非常常用<br>strings包提供了对字符串的操作，比如判断字符串是否为空、字符串长度、字符串拼接等等。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;strings&quot;</span><br><br><span class="hljs-comment">// 字符串包含检查</span><br>strings.Contains(<span class="hljs-string">&quot;hello world&quot;</span>, <span class="hljs-string">&quot;world&quot;</span>) <span class="hljs-comment">// true</span><br><br><span class="hljs-comment">// 字符串分割</span><br>strings.Split(<span class="hljs-string">&quot;a,b,c&quot;</span>, <span class="hljs-string">&quot;,&quot;</span>) <span class="hljs-comment">// []string&#123;&quot;a&quot;, &quot;b&quot;, &quot;c&quot;&#125;</span><br><br><span class="hljs-comment">// 字符串拼接</span><br>strings.Join([]<span class="hljs-type">string</span>&#123;<span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-string">&quot;b&quot;</span>, <span class="hljs-string">&quot;c&quot;</span>&#125;, <span class="hljs-string">&quot;,&quot;</span>) <span class="hljs-comment">// &quot;a,b,c&quot;</span><br><br><span class="hljs-comment">// 字符串替换</span><br>strings.Replace(<span class="hljs-string">&quot;hello world&quot;</span>, <span class="hljs-string">&quot;world&quot;</span>, <span class="hljs-string">&quot;go&quot;</span>, <span class="hljs-number">1</span>) <span class="hljs-comment">// &quot;hello go&quot;</span><br><br><span class="hljs-comment">// 字符串转大写/小写</span><br>strings.ToUpper(<span class="hljs-string">&quot;hello&quot;</span>) <span class="hljs-comment">// &quot;HELLO&quot;</span><br>strings.ToLower(<span class="hljs-string">&quot;HELLO&quot;</span>) <span class="hljs-comment">// &quot;hello&quot;</span><br><br><span class="hljs-comment">// 去除空格</span><br>strings.TrimSpace(<span class="hljs-string">&quot;  hello  &quot;</span>) <span class="hljs-comment">// &quot;hello&quot;</span><br><br><span class="hljs-comment">// 字符串前缀/后缀检查</span><br>strings.HasPrefix(<span class="hljs-string">&quot;hello.go&quot;</span>, <span class="hljs-string">&quot;hello&quot;</span>) <span class="hljs-comment">// true</span><br>strings.HasSuffix(<span class="hljs-string">&quot;hello.go&quot;</span>, <span class="hljs-string">&quot;.go&quot;</span>) <span class="hljs-comment">// true</span><br></code></pre></td></tr></table></figure>
+
+<h3 id="io"><a href="#io" class="headerlink" title="io"></a>io</h3><p>io包提供了对输入输出流的操作，比如读取文件、写入文件、复制文件等等。<br>核心接口：</p>
+<ul>
+<li>io.Reader: 读取数据</li>
+<li>io.Writer: 写入数据</li>
+<li>io.Closer: 关闭流</li>
+<li>io.Seeker: 移动文件指针<br>常用函数：</li>
+<li>io.Copy(dst Writer, src Reader) (written int64, err error): 将src的数据复制到dst中</li>
+<li>io.ReadAll(r io.Reader) ([]byte, error): 读取r中的所有数据并返回一个字节切片</li>
+<li>io.WriteString(w io.Writer, s string) (int, error): 将字符串s写入w中<br>使用示例：</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 使用 Reader 接口</span><br>reader := strings.NewReader(<span class="hljs-string">&quot;Hello, World!&quot;</span>)<br><span class="hljs-comment">// 使用 Writer 接口</span><br><span class="hljs-keyword">var</span> buffer bytes.Buffer<br><span class="hljs-comment">// Copy 数据从 Reader 到 Writer</span><br>written, err := io.Copy(&amp;buffer, reader)<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	fmt.Printf(<span class="hljs-string">&quot;Error: %v\n&quot;</span>, err)<br>	<span class="hljs-keyword">return</span><br>&#125;<br>fmt.Printf(<span class="hljs-string">&quot;Copied %d bytes: %s\n&quot;</span>, written, buffer.String())<br></code></pre></td></tr></table></figure>
+
+<h3 id="os"><a href="#os" class="headerlink" title="os"></a>os</h3><p>os包提供了对操作系统操作，比如获取当前目录、创建目录、删除目录等等。<br>配合io包可以实现文件的读写操作</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go">f, _ := os.Create(<span class="hljs-string">&quot;fff&quot;</span>)<br>f.Write([]<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;Hello , file&quot;</span>))<br>path := <span class="hljs-string">&quot;fff&quot;</span><br>file, _ := os.ReadFile(path)<br>readfile := strings.NewReader(<span class="hljs-type">string</span>(file))<br>fmt.Println(readfile)<br>fmt.Println(file)<br></code></pre></td></tr></table></figure>
+
+
+<h3 id="exec"><a href="#exec" class="headerlink" title="exec"></a>exec</h3><p>exec包提供了对操作系统命令的调用，比如执行shell命令、获取命令的输出等等。</p>
+<ul>
+<li>exec.Command(name string, arg …string) *exec.Cmd: 创建一个命令对象，name是命令名称，arg是命令参数</li>
+<li>exec.LookPath(file string) (string, error): 在系统PATH中查找可执行文件<br>Cmd结构体主要方法</li>
+<li>Cmd.Run() error: 运行命令，并等待命令完成</li>
+<li>Cmd.Start() error: 启动命令，不等待命令完成</li>
+<li>Cmd.Wait() error: 等待命令完成</li>
+<li>Cmd.Output() ([]byte, error): 运行命令并返回命令的输出</li>
+</ul>
+<p>有了上述前置知识，我们来实现一个编译运行go文件的小demo</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 直接运行Go文件</span><br>	cmd := exec.Command(<span class="hljs-string">&quot;go&quot;</span>, <span class="hljs-string">&quot;run&quot;</span>, <span class="hljs-string">&quot;./demo/test.go&quot;</span>)<br>	output, err := cmd.CombinedOutput() <span class="hljs-comment">// 获取命令的输出</span><br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Printf(<span class="hljs-string">&quot;运行错误: %v\n&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	fmt.Printf(<span class="hljs-string">&quot;运行结果:\n%s\n&quot;</span>, <span class="hljs-type">string</span>(output))<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>以上就是一些常用包的简单介绍😋，非常水啊。</p>
+
+  </div>
+
+  <br />
+
+  
+  <br /><br />
+
+
+  
+
+<div id="copyright">
+
+  <a id="license-image" rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img height="15" width="80" alt="知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" />
+  </a>
+
+  <p id="license-word-hyper">
+    本作品采用
+    <a rel="license noopener" target="_blank" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
+    知识共享 署名-非商业性使用-相同方式共享 4.0 国际许可协议</a>
+    进行许可。
+  </p>
+</div>
+
+  <div id="top">
+  <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</div>
+  <div onclick="document.getElementById('footer').scrollIntoView({behavior: 'smooth'})">▼</div>
+</div>
+  
+
+</post>
+  </div>
+
+  <foot id="footer">
+  <hr class="boldline" />
+  <br>
+
+  <p class="center font">
+    
+    <a target="_blank" rel="noopener" href="https://github.com/UndertaK33r" aria-label="GitHub">
+  <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+   <path class="icon_path" d="M427.392 853.504a61.44 61.44 0 0 1-1.450667 15.530667 92.586667 92.586667 0 0 1-10.965333 27.605333c-15.061333 25.301333-40.661333 42.154667-73.642667 42.154667-77.653333 0-108.117333-38.101333-146.261333-133.504C169.216 740.693333 157.013333 725.461333 128 725.461333v-85.333333c77.653333 0 108.117333 38.101333 146.261333 133.504 25.856 64.597333 38.058667 79.786667 67.072 79.786667 0-12.373333-0.170667-23.296-0.512-38.144-0.853333-34.816-0.938667-41.941333 0.554667-51.2 0.64-20.352 5.888-34.773333 16.384-49.066667-95.232-20.736-159.445333-63.573333-196.309333-132.992l-13.824-32.426667C134.186667 510.848 128 467.072 128 416.426667c0-58.24 17.749333-110.336 50.944-153.856-10.368-41.386667-8.96-91.989333 13.909333-149.077334l7.466667-18.688 19.2-6.101333c2.56-0.853333 5.632-1.578667 9.301333-2.133333 37.290667-5.888 90.325333 8.106667 159.701334 52.48a565.930667 565.930667 0 0 1 127.274666-14.208c38.741333 0 77.226667 3.882667 114.048 11.605333 67.456-42.24 119.04-55.509333 155.306667-49.92 3.626667 0.597333 6.741333 1.322667 9.258667 2.133333l19.285333 6.101334 7.466667 18.773333c20.010667 50.218667 23.424 96.469333 16.128 136.96C875.434667 296.32 896 352.597333 896 416.512c0 53.888-3.84 94.378667-14.933333 133.802667l-11.733334 32.170666c-30.677333 69.333333-98.304 112.64-202.538666 133.248 10.837333 15.018667 15.872 30.250667 15.872 52.394667v42.666667l-0.042667 42.666666a13.013333 13.013333 0 0 0 0.341333 2.730667L682.666667 938.794667c-36.352 0-63.36-17.706667-76.672-45.653334a88.277333 88.277333 0 0 1-8.661334-40.277333v-84.736c0-3.584-0.128-3.797333-8.832-12.501333-23.296-23.296-33.834667-40.874667-33.834666-72.832v-38.613334l38.4-3.84c114.346667-11.52 176.512-43.221333 197.12-89.6l9.6-26.325333c7.68-27.562667 10.88-61.098667 10.88-107.946667 0-49.706667-17.365333-90.837333-50.218667-123.648L742.4 274.773333l7.381333-24.448c6.528-21.717333 8.106667-47.402667 1.152-76.714666a158.634667 158.634667 0 0 0-3.584 0.938666c-22.826667 6.4-51.370667 20.053333-85.76 43.008l-15.658666 10.453334-18.304-4.522667a467.754667 467.754667 0 0 0-111.829334-13.269333c-42.709333 0-84.906667 5.418667-123.946666 16.042666l-19.029334 5.205334-16.256-11.136c-35.541333-24.32-65.109333-38.826667-88.746666-45.568a158.293333 158.293333 0 0 0-4.864-1.28c-8.234667 33.92-4.992 61.781333 3.413333 82.688l9.984 25.088-18.346667 19.797333C228.693333 332.629333 213.333333 370.986667 213.333333 416.512c0 41.685333 4.864 76.202667 13.824 102.229333l11.178667 26.453334c27.904 52.352 87.168 83.84 192.853333 95.146666l38.144 4.096v38.357334c0 32-10.538667 49.536-33.834666 72.832-8.704 8.704-8.832 8.96-8.832 12.501333l-0.725334 7.893333c-0.512 2.56-0.512 9.258667 0.170667 37.205334 0.298667 12.8 0.469333 22.997333 0.554667 33.621333a33.962667 33.962667 0 0 1 0.725333 6.656z"/>
+  </svg>
+ </a>
+
+    
+    
+    <a href="mailto:2331627921@qq.com" aria-label="Email">
+  <svg class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <path d="M513.78 602.99c-27.28 0.45-53.79-9.09-74.53-26.83l-65.96-56.64c-15.64-13.37-17.48-36.9-4.1-52.54 13.38-15.65 36.9-17.48 52.54-4.1l65.96 56.64c13.68 11.1 33.27 11.1 46.95 0L881.2 253.08l-708.02-2.61c-20.58 0-37.26-16.69-37.26-37.26s16.68-37.26 37.26-37.26H881.2c41.09-2.36 76.32 29.05 78.67 70.14a74.519 74.519 0 0 1-32.46 65.87L580.86 578.38a111.842 111.842 0 0 1-67.08 24.61z m444.57 133.4V438.28c0-20.58-16.68-37.26-37.26-37.26s-37.26 16.69-37.26 37.26V736.4c0 20.58-16.68 37.26-37.26 37.26h-521.7c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h521.7c61.72 0.01 111.78-50.05 111.78-111.79zM362.12 363.75c0-20.58-16.68-37.26-37.26-37.26h-223.6c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h223.59c20.58 0.01 37.27-16.68 37.27-37.26z m0 298.12c0-20.58-16.68-37.26-37.26-37.26h-111.8c-20.58 0-37.26 16.69-37.26 37.26s16.68 37.26 37.26 37.26h111.79c20.58 0 37.27-16.69 37.27-37.26z"/>
+  </svg>
+</a>
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  <p>
+    <br>
+  <p id="hitokoto">:D 获取中...</p>
+  <script src="https://v1.hitokoto.cn/?c=a&encode=js&select=%23hitokoto" defer></script>
+  <br>
+  <p class="center font">
+    &copy - <a href="https://UndertaK33r.github.io">UndertaK33r</a> -  2025 - Powered by <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>  Theme <a target="_blank" rel="noopener" href="https://github.com/pcrab/hexo-theme-quark"> Quark </a> 
+  </p>
+  
+  <br />
+</foot>
+  
+  <!-- particles.js 初始化脚本 -->
+  <script>
+    // particles.js 配置 - 适度增强粒子效果
+    particlesJS('particles-js', {
+      "particles": {
+        "number": {
+          "value": 55,  /* 适度增加粒子数量 */
+          "density": {
+            "enable": true,
+            "value_area": 1000  /* 适度增加密度 */
+          }
+        },
+        "color": {
+          "value": "#7dd3fc"
+        },
+        "shape": {
+          "type": "circle",
+          "stroke": {
+            "width": 0,
+            "color": "#000000"
+          }
+        },
+        "opacity": {
+          "value": 0.45,  /* 提高透明度，增强可见度 */
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 0.8,  /* 适度加快透明度变化 */
+            "opacity_min": 0.1,
+            "sync": false
+          }
+        },
+        "size": {
+          "value": 2,  /* 适度增大粒子尺寸 */
+          "random": true,
+          "anim": {
+            "enable": true,
+            "speed": 1.2,  /* 加快大小变化 */
+            "size_min": 0.3,
+            "sync": false
+          }
+        },
+        "line_linked": {
+          "enable": true,
+          "distance": 130,  /* 增加连接距离，更容易形成网络 */
+          "color": "#7dd3fc",
+          "opacity": 0.25,  /* 适度提高连接线透明度 */
+          "width": 1
+        },
+        "move": {
+          "enable": true,
+          "speed": 1.2,  /* 适度加快移动速度 */
+          "direction": "none",
+          "random": true,
+          "straight": false,
+          "out_mode": "out",
+          "bounce": false,
+          "attract": {
+            "enable": false,
+            "rotateX": 600,
+            "rotateY": 1200
+          }
+        }
+      },
+      "interactivity": {
+        "detect_on": "canvas",
+        "events": {
+          "onhover": {
+            "enable": true,
+            "mode": "grab"  /* 保持鼠标交互 */
+          },
+          "onclick": {
+            "enable": true,  /* 重新启用点击交互，增加互动性 */
+            "mode": "push"
+          },
+          "resize": true
+        },
+        "modes": {
+          "grab": {
+            "distance": 150,  /* 增加抓取距离 */
+            "line_linked": {
+              "opacity": 0.5  /* 抓取时线条更明显 */
+            }
+          },
+          "bubble": {
+            "distance": 100,
+            "size": 40,
+            "duration": 2,
+            "opacity": 8,
+            "speed": 3
+          },
+          "repulse": {
+            "distance": 200,
+            "duration": 0.4
+          },
+          "push": {
+            "particles_nb": 3  /* 点击时添加3个粒子 */
+          },
+          "remove": {
+            "particles_nb": 2
+          }
+        }
+      },
+      "retina_detect": true
+    });
+  </script>
+</body>
+
+</html>
