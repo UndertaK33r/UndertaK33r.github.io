@@ -51,16 +51,16 @@
 </div>
   <div class="navi">
   <a id="navi_item_title" href="/#" class="menu-item-link">
-    主页
+    [主页]
   </a>
   <a id="navi_item_tags" href="/tags" class="menu-item-link">
-    标签
+    [标签]
   </a>
   <a id="navi_item_about" href="/about" class="menu-item-link">
-    关于
+    [关于]
   </a>
   <a id="navi_item_search" href="/search" class="menu-item-link">
-    搜索
+    [搜索]
   </a>
   
 </div>
@@ -107,11 +107,13 @@
 <h4 id="模型搭建"><a href="#模型搭建" class="headerlink" title="模型搭建"></a>模型搭建</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyModel</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-built_in">super</span>(MyModel, <span class="hljs-variable language_">self</span>).__init__()<br>        <br>        <span class="hljs-comment"># 方法1：逐层定义（推荐用于复杂连接）</span><br>        <span class="hljs-variable language_">self</span>.conv1 = nn.Conv2d(<span class="hljs-number">3</span>, <span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">3</span>, stride=<span class="hljs-number">1</span>, padding=<span class="hljs-number">1</span>)<br>        <span class="hljs-variable language_">self</span>.relu1 = nn.ReLU(inplace=<span class="hljs-literal">True</span>)<br>        <span class="hljs-variable language_">self</span>.pool1 = nn.MaxPool2d(kernel_size=<span class="hljs-number">2</span>, stride=<span class="hljs-number">2</span>)<br>        <br>        <span class="hljs-comment"># 方法2：使用Sequential（适合简单堆叠）</span><br>        <span class="hljs-variable language_">self</span>.features = nn.Sequential(<br>            nn.Conv2d(<span class="hljs-number">64</span>, <span class="hljs-number">128</span>, kernel_size=<span class="hljs-number">3</span>, stride=<span class="hljs-number">1</span>, padding=<span class="hljs-number">1</span>),<br>            nn.ReLU(inplace=<span class="hljs-literal">True</span>),<br>            nn.MaxPool2d(kernel_size=<span class="hljs-number">2</span>, stride=<span class="hljs-number">2</span>),<br>            <span class="hljs-comment"># 可以继续添加更多层...</span><br>        )<br>        <br>        <span class="hljs-comment"># 添加分类层（如果需要分类）</span><br>        <span class="hljs-variable language_">self</span>.classifier = nn.Linear(<span class="hljs-number">128</span>, <span class="hljs-number">10</span>)  <span class="hljs-comment"># 示例</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):<br>        <span class="hljs-comment"># 使用逐层定义的部分</span><br>        x = <span class="hljs-variable language_">self</span>.conv1(x)<br>        x = <span class="hljs-variable language_">self</span>.relu1(x)<br>        x = <span class="hljs-variable language_">self</span>.pool1(x)<br>        <br>        <span class="hljs-comment"># 使用Sequential部分</span><br>        x = <span class="hljs-variable language_">self</span>.features(x)<br>        <br>        <span class="hljs-comment"># 如果有全连接层，需要展平</span><br>        <span class="hljs-comment"># x = x.view(x.size(0), -1)</span><br>        <span class="hljs-comment"># x = self.classifier(x)</span><br>        <br>        <span class="hljs-keyword">return</span> x<br><br></code></pre></td></tr></table></figure>
 <h4 id="损失函数和反向传播"><a href="#损失函数和反向传播" class="headerlink" title="损失函数和反向传播"></a>损失函数和反向传播</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python">loss = nn.CrossEntropyLoss() <span class="hljs-comment">#损失函数</span><br>md = MyModel()<br>optim = torch.optim.SGD(md.parameters(),lr=<span class="hljs-number">0.01</span>)<br><span class="hljs-comment"># lr是学习速率</span><br><span class="hljs-keyword">for</span> epoh <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">20</span>):<br>    running_loss = <span class="hljs-number">0.0</span><br>    <span class="hljs-keyword">for</span> data <span class="hljs-keyword">in</span> dataloader:<br>        imgs, targets = data<br>        outputs = md(imgs)<br>        result_loss = loss(outputs, targets)<br>        optim.zero_grad()  <span class="hljs-comment"># 将梯度清零</span><br>        result_loss.backward()  <span class="hljs-comment"># 通过反向传播求出每一个节点的梯度</span><br>        optim.step()  <span class="hljs-comment"># 对每一个进行调优</span><br>        <span class="hljs-comment"># print(result_loss)</span><br>        running_loss = running_loss + result_loss<br>    <span class="hljs-built_in">print</span>(running_loss)<br><br></code></pre></td></tr></table></figure>
 
-<h3 id="单目深度估计"><a href="#单目深度估计" class="headerlink" title="单目深度估计"></a>单目深度估计</h3><p>单目深度估计指的是输入一张图片，输出一张深度图，深度图表示的是图片中各个像素点的深度。<br>现在我了解到的一些单目深度估计的模型有：depth anything2，MiDas ，其他的只能说不是很了解，虽然这两个也不是很了解但是先记下来</p>
-<p>单目深度估计的难点在于单张图是2D信息，而深度图是3D信息，如何将2D信息转换成3D信息<br>主流做法是写一个编码器和解码器<br>比如先用一个残差网络去掉最后的展平和全连接层来编码图片，得到一个通道数很多的特征图，然后用一个解码器来解码这个特征图，得到一个深度图</p>
-<h4 id="depth-anything"><a href="#depth-anything" class="headerlink" title="depth anything"></a>depth anything</h4><p>直接来看看depth anything的模型结构<br>采用的是主流的编解码结构<br>使用DINOv2编码器，解码器则是DPT<br>DINOv2是meta的预训练模型，主要是一种自监督训练用于让无标注数据也能进行训练来提高样本数量<br>接下来我来看看depth anything里面的DINOv2层怎么实现vit</p>
-<h4 id="第一步是patch-embed"><a href="#第一步是patch-embed" class="headerlink" title="第一步是patch-embed"></a>第一步是patch-embed</h4><p>将二维图像转换成一序列的patches<br>输入为（B，C，H，W）patch序列为（B，N，D）<br>B: 批次大小 (batch size)<br>C: 通道数 (channels)<br>H: 图像高度 (height)<br>W: 图像宽度 (width)<br>N: 补丁数量 (number of patches)<br>D: 嵌入维度 (embedding dimension)</p>
-
+<h3 id="单目深度估计"><a href="#单目深度估计" class="headerlink" title="单目深度估计"></a>单目深度估计</h3><p>单目深度估计指的是输入一张图片，输出一张深度图，深度图表示的是图片中各个像素点的深度。<br>单目深度估计是一个病态问题，因为把一个3维的空间变成二维图像本身就丢失第三维度的深度信息，从2D投影恢复3D结构存在本质上的信息缺失。<br>同时，即使知道物体的相对深度关系，也无法确定绝对尺度。<br>而且，同一张2D图像可能对应多种不同的3D场景结构，没有唯一解。</p>
+<p>此外，单目深度估计的数据集成本较高，本身没有丰富的绝对尺度数据集的同时，不同数据集之间的尺度单位不同。<br>种种条件上看来，单目深度估计存在很大挑战。</p>
+<p>现在我了解到的一些当下的效果较好的单目深度估计的模型有：depth anything2，Marigold等。<br>这两种模型代表了不同的两类单目深度估计模型的思路：判别式模型和生成式模型。</p>
+<h4 id="判别式模型"><a href="#判别式模型" class="headerlink" title="判别式模型"></a>判别式模型</h4><p>核心目标是直接学习从输入图像到深度图的映射关系，通过最小化预测深度与真实深度（Ground Truth）的回归损失（如 MSE、AbsRel 等），输出逐像素的深度值。<br>常用神经网络实现端到端映射。</p>
+<h4 id="生成式模型"><a href="#生成式模型" class="headerlink" title="生成式模型"></a>生成式模型</h4><p>生成式模型是单目深度估计领域的新兴技术路径，其核心目标是学习深度值的逐像素概率分布，而非直接输出确定性深度映射。<br>当下的新兴模型主要是用扩散模型学习深度值的分布规律，可生成多个符合场景逻辑的深度预测结果。</p>
+<p>接下来结合论文来讲解下两个模型</p>
+<h4 id="Depth-Anything2"><a href="#Depth-Anything2" class="headerlink" title="Depth Anything2"></a>Depth Anything2</h4>
   </div>
 
   <br />
@@ -198,7 +200,7 @@
           }
         },
         "color": {
-          "value": "#7dd3fc"
+          "value": "#00ff41"
         },
         "shape": {
           "type": "circle",
@@ -230,7 +232,7 @@
         "line_linked": {
           "enable": true,
           "distance": 130,  /* 增加连接距离，更容易形成网络 */
-          "color": "#7dd3fc",
+          "color": "#00ff41",
           "opacity": 0.25,  /* 适度提高连接线透明度 */
           "width": 1
         },

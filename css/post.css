@@ -14,32 +14,34 @@ post a:hover {
   font-weight: bold;
   font-size: 2.3rem;
   text-align: center;
-  background: linear-gradient(135deg, #7dd3fc 0%, #38bdf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #00ff41;
   margin: 2rem 0 1rem 0;
   position: relative;
   transition: all 0.3s ease;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  text-shadow: 0 0 15px rgba(0,255,65,0.6);
+  letter-spacing: 0.05em;
 /* 悬停效果 */
+}
+.post_title::before {
+  content: '/* ';
+  opacity: 0.7;
+  font-size: 1.5rem;
+}
+.post_title::after {
+  content: ' */';
+  opacity: 0.7;
+  font-size: 1.5rem;
 }
 .post_title:hover {
   transform: scale(1.02);
-  filter: brightness(1.1);
-}
-.post_title:after {
-  content: '';
-  display: block;
-  margin: 0.2rem auto 0;
-  width: 15rem;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #7dd3fc, transparent); /* 统一使用蓝色系渐变 */
-  animation: titleUnderline 3s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(0,255,65,0.8);
 }
 #post_content {
-  font-size: 1.1rem; /* 稍微减小字号 */
-  line-height: 1.8; /* 增加行高，提高可读性 */
-  color: #e2e8f0; /* 提高文字对比度 */
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: #00ff41;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
 /* 表格样式美化 */
 /* 强调元素样式 - 朴素设计 */
 /* 分割线样式 - 简化设计 */
@@ -159,39 +161,42 @@ h4 {
 .busuanzi {
   font-weight: bold;
 }
-/* Hexo highlight.js 支持 - 深色主题 - 朴素设计 */
-#post_content pre,
+/* 终端风格代码块 */
 #post_content .highlight {
   margin: 1.5rem 0;
   padding: 0;
-  background: rgba(15,23,42,0.8) !important;
-  border: 1px solid rgba(125,211,252,0.2); /* 更微妙的边框 */
-  border-radius: 8px; /* 更小的圆角 */
+  background: rgba(0,0,0,0.95) !important;
+  border: 2px solid #00ff41;
+  border-radius: 4px;
   overflow: hidden;
   position: relative;
   width: 100%;
   box-sizing: border-box;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2); /* 更轻微的阴影 */
+  box-shadow: 0 0 20px rgba(0,255,65,0.3), inset 0 0 30px rgba(0,255,65,0.05);
   transition: all 0.3s ease;
-/* 移除彩虹装饰条，改为简单的顶部线条 */
-/* 移除内发光动画 */
+/* 终端标题栏 */
 }
-#post_content pre::before,
 #post_content .highlight::before {
-  content: '';
+  content: '● ● ● terminal';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: #7dd3fc; /* 简单的蓝色线条 */
-  opacity: 0.6;
+  height: 30px;
+  background: rgba(0,255,65,0.1);
+  border-bottom: 1px solid #00ff41;
+  color: #00ff41;
+  font-size: 0.75rem;
+  line-height: 30px;
+  padding-left: 15px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  letter-spacing: 0.1em;
+  z-index: 10;
 }
-#post_content pre:hover,
 #post_content .highlight:hover {
-  border-color: rgba(125,211,252,0.4);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  border-color: #00ff41;
+  box-shadow: 0 0 30px rgba(0,255,65,0.5), inset 0 0 40px rgba(0,255,65,0.08);
 }
 /* Hexo生成的代码块结构 */
 #post_content .highlight table {
@@ -204,65 +209,73 @@ h4 {
   border: none;
 }
 #post_content .highlight .gutter {
-  background: rgba(30,41,59,0.9); /* 深色行号区背景 */
-  border-right: 1px solid rgba(255,255,255,0.1);
+  background: rgba(0,0,0,0.8);
+  border-right: 1px solid #00ff41;
   padding: 0;
-  width: 40px;
+  width: 50px;
   text-align: center;
 }
 #post_content .highlight .gutter pre {
   background: transparent;
   margin: 0;
-  padding: 20px 5px;
-  color: #64748b; /* 浅灰色行号 */
-  font-size: 13px;
-  line-height: 1.5;
+  padding: 50px 5px 20px 5px;
+  color: #00ff41;
+  font-size: 12px;
+  line-height: 1.6;
+  opacity: 0.5;
 }
 #post_content .highlight .code {
-  background: rgba(15,23,42,0.6); /* 代码区背景 */
+  background: rgba(0,0,0,0.6);
   padding: 0;
 }
 #post_content .highlight .code pre {
   background: transparent;
   margin: 0;
-  padding: 20px;
-  color: #f1f5f9 !important; /* 浅色代码文字 */
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  padding: 50px 20px 20px 20px;
+  color: #00ff41 !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   overflow-x: auto;
 }
-/* 传统代码块样式 - 深色主题 - 朴素设计 */
-#post_content pre {
-  background: rgba(15,23,42,0.8) !important;
-  border: 1px solid rgba(125,211,252,0.2);
-  border-radius: 8px;
+/* 传统代码块样式 - 终端风格（仅用于非highlight的pre） */
+#post_content pre:not(.highlight pre) {
+  background: rgba(0,0,0,0.95) !important;
+  border: 2px solid #00ff41;
+  border-radius: 4px;
   backdrop-filter: blur(10px);
-  padding: 20px;
-  color: #f1f5f9 !important;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  padding: 50px 20px 20px 20px;
+  color: #00ff41 !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
   overflow-x: auto;
-  margin: 0;
+  margin: 1.5rem 0;
   position: relative;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  box-shadow: 0 0 20px rgba(0,255,65,0.3), inset 0 0 30px rgba(0,255,65,0.05);
   transition: all 0.3s ease;
-/* 简单的顶部线条 */
+/* 终端标题栏 */
 }
-#post_content pre::before {
-  content: '';
+#post_content pre:not(.highlight pre)::before {
+  content: '● ● ● terminal';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: #7dd3fc;
-  opacity: 0.6;
+  height: 30px;
+  background: rgba(0,255,65,0.1);
+  border-bottom: 1px solid #00ff41;
+  color: #00ff41;
+  font-size: 0.75rem;
+  line-height: 30px;
+  padding-left: 15px;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  letter-spacing: 0.1em;
+  z-index: 10;
 }
-#post_content pre:hover {
-  border-color: rgba(125,211,252,0.4);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+#post_content pre:not(.highlight pre):hover {
+  border-color: #00ff41;
+  box-shadow: 0 0 30px rgba(0,255,65,0.5), inset 0 0 40px rgba(0,255,65,0.08);
 }
 #post_content pre code {
   background: transparent;
@@ -274,23 +287,44 @@ h4 {
   font-size: inherit;
   line-height: inherit;
 }
-/* 行内代码样式 - 深色主题 */
+/* 行内代码样式 - 终端风格 */
 #post_content p code,
 #post_content li code,
 #post_content h1 code,
 #post_content h2 code,
 #post_content h3 code,
 #post_content h4 code {
-  background: rgba(125,211,252,0.15) !important; /* 蓝色半透明背景 */
-  color: #7dd3fc !important; /* 亮蓝色文字 */
-  padding: 3px 8px !important;
-  border-radius: 6px !important;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace !important;
+  background: rgba(0,0,0,0.8) !important;
+  color: #00ff41 !important;
+  padding: 2px 6px !important;
+  border-radius: 2px !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace !important;
   font-size: 0.9em !important;
-  border: 1px solid rgba(125,211,252,0.3) !important;
-  margin: 0 !important;
+  border: 1px solid #00ff41 !important;
+  margin: 0 2px !important;
   font-weight: 500 !important;
   backdrop-filter: blur(5px);
+  box-shadow: 0 0 5px rgba(0,255,65,0.3);
+}
+#post_content p code::before,
+#post_content li code::before,
+#post_content h1 code::before,
+#post_content h2 code::before,
+#post_content h3 code::before,
+#post_content h4 code::before {
+  content: '`';
+  opacity: 0.5;
+  margin-right: 2px;
+}
+#post_content p code::after,
+#post_content li code::after,
+#post_content h1 code::after,
+#post_content h2 code::after,
+#post_content h3 code::after,
+#post_content h4 code::after {
+  content: '`';
+  opacity: 0.5;
+  margin-left: 2px;
 }
 /* 语法高亮样式 - 深色主题配色 */
 .hljs-comment,
