@@ -42,9 +42,8 @@
 <meta name="generator" content="Hexo 8.0.0"></head>
 
 <body>
-  <!-- particles.js 粒子系统容器 -->
-  <div id="particles-js"></div>
   
+
   <div class="title">
   <img class="title_img" alt="Title image" width="300" height="300" src="/images/mylogo.jpg" /><br>
   <div id="site_title">Undertaker's Blog</div>
@@ -80,7 +79,7 @@
   <br /><br />
 
   <div id="post_content">
-    <p>在日常开发或者实践中有许多go的包经常用到，虽然我们可以直接去（<a target="_blank" rel="noopener" href="https://pkg.go.dev/)%E6%9F%A5%E7%9C%8B%E8%87%AA%E5%B7%B1%E6%83%B3%E7%94%A8%E7%9A%84%E5%8C%85%EF%BC%8C%E4%BD%86%E6%98%AF%E4%BC%BC%E4%B9%8E%E4%B8%8D%E6%98%AF%E5%BE%88%E5%8F%8B%E5%A5%BD%E3%80%82">https://pkg.go.dev/)查看自己想用的包，但是似乎不是很友好。</a><br>另外，有时候虽然用一些包但是只是用过的话，记忆点不是很深刻，重新用的时候还是很恐惧😱，因此需要记录一下同时夯实基础😼。</p>
+    <p>在日常开发或者实践中有许多go的包经常用到，虽然我们可以直接去(<a target="_blank" rel="noopener" href="https://pkg.go.dev/">https://pkg.go.dev</a>)<br>查看自己想用的包，但是似乎不是很友好。<br>另外，有时候虽然用一些包但是只是用过的话，记忆点不是很深刻，重新用的时候还是很恐惧😱，因此需要记录一下同时夯实基础😼。</p>
 <h3 id="time"><a href="#time" class="headerlink" title="time"></a>time</h3><p>time包提供了对时间的操作，比如获取当前时间、格式化时间、计算时间间隔等等。<br>在我们喜闻乐见的上下文中或者数据库定义里我们经常会用time.Time</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go">   <span class="hljs-comment">// 获取当前时间</span><br><span class="hljs-keyword">var</span> t time.Time<br>t = time.Now()<br>fmt.Println(t.Format(<span class="hljs-string">&quot;2006-01-02 15:04:05&quot;</span>))<br></code></pre></td></tr></table></figure>
 <p>可以用Year(), Month(), Day(), Hour(), Minute(), Second()等方法来获取时间的各个部分</p>
@@ -197,112 +196,10 @@
   <br />
 </foot>
   
-  <!-- particles.js 初始化脚本 -->
-  <script>
-    // particles.js 配置 - 适度增强粒子效果
-    particlesJS('particles-js', {
-      "particles": {
-        "number": {
-          "value": 55,  /* 适度增加粒子数量 */
-          "density": {
-            "enable": true,
-            "value_area": 1000  /* 适度增加密度 */
-          }
-        },
-        "color": {
-          "value": "#00ff41"
-        },
-        "shape": {
-          "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#000000"
-          }
-        },
-        "opacity": {
-          "value": 0.45,  /* 提高透明度，增强可见度 */
-          "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 0.8,  /* 适度加快透明度变化 */
-            "opacity_min": 0.1,
-            "sync": false
-          }
-        },
-        "size": {
-          "value": 2,  /* 适度增大粒子尺寸 */
-          "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 1.2,  /* 加快大小变化 */
-            "size_min": 0.3,
-            "sync": false
-          }
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 130,  /* 增加连接距离，更容易形成网络 */
-          "color": "#00ff41",
-          "opacity": 0.25,  /* 适度提高连接线透明度 */
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 1.2,  /* 适度加快移动速度 */
-          "direction": "none",
-          "random": true,
-          "straight": false,
-          "out_mode": "out",
-          "bounce": false,
-          "attract": {
-            "enable": false,
-            "rotateX": 600,
-            "rotateY": 1200
-          }
-        }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "grab"  /* 保持鼠标交互 */
-          },
-          "onclick": {
-            "enable": true,  /* 重新启用点击交互，增加互动性 */
-            "mode": "push"
-          },
-          "resize": true
-        },
-        "modes": {
-          "grab": {
-            "distance": 150,  /* 增加抓取距离 */
-            "line_linked": {
-              "opacity": 0.5  /* 抓取时线条更明显 */
-            }
-          },
-          "bubble": {
-            "distance": 100,
-            "size": 40,
-            "duration": 2,
-            "opacity": 8,
-            "speed": 3
-          },
-          "repulse": {
-            "distance": 200,
-            "duration": 0.4
-          },
-          "push": {
-            "particles_nb": 3  /* 点击时添加3个粒子 */
-          },
-          "remove": {
-            "particles_nb": 2
-          }
-        }
-      },
-      "retina_detect": true
-    });
-  </script>
+  
+  
+<script src="/js/perf-toggle.js"></script>
+
 </body>
 
 </html>

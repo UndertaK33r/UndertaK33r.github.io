@@ -644,11 +644,15 @@ body {
   box-shadow: 0 0 20px rgba(0,255,65,0.3), 0 0 40px rgba(0,255,65,0.1), inset 0 0 60px rgba(0,255,65,0.05);
   position: relative;
   z-index: 2;
-  animation: terminalBoot 1s ease-out, borderGlow 3s ease-in-out infinite;
+/* 性能优化：禁用持续动画，只保留启动动画 */
+  animation: terminalBoot 1s ease-out;
   color: #00ff41 !important;
   transition: all 0.3s ease;
-/* 终端扫描线效果 */
-/* CRT屏幕曲面效果 */
+/* 使用GPU加速 */
+  will-change: auto;
+  transform: translateZ(0);
+/* 终端扫描线效果 - 禁用动画以提高性能 */
+/* CRT屏幕曲面效果 - 简化以提高性能 */
 }
 body::before {
   content: '';
@@ -657,10 +661,11 @@ body::before {
   left: 0;
   right: 0;
   bottom: 0;
-  background: repeating-linear-gradient(0deg, rgba(0,255,65,0.03) 0px, transparent 1px, transparent 2px, rgba(0,255,65,0.03) 3px);
+  background: repeating-linear-gradient(0deg, rgba(0,255,65,0.02) 0px, transparent 1px, transparent 2px, rgba(0,255,65,0.02) 3px);
   pointer-events: none;
   z-index: 1;
-  animation: scanlines 8s linear infinite;
+/* 禁用扫描线动画 */
+/* animation: scanlines 8s linear infinite; */
 }
 body::after {
   content: '';
@@ -669,7 +674,7 @@ body::after {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.3) 100%);
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.2) 100%);
   pointer-events: none;
   z-index: 1;
   border-radius: 8px;
@@ -787,7 +792,7 @@ ol {
 /* 移除发光效果 */
 }
 #top div:hover {
-  background: rgba(125,211,252,0.1);
+  background: rgba(0,255,65,0.05);
 }
 code {
   font-family: monospace, sans-serif;
@@ -803,7 +808,7 @@ code {
   pointer-events: none; /* 不阻挡页面交互 */
   z-index: 1; /* 在背景之上，内容之下 */
   overflow: hidden;
-/* 根据用户偏好，只在边框添加微妙装饰 - 适度增强 */
+/* 终端绿色边框装饰 */
 /* Canvas 元素样式优化 */
 }
 #particles-js::before {
@@ -813,13 +818,13 @@ code {
   left: 0;
   right: 0;
   bottom: 0;
-  border: 1px solid rgba(125,211,252,0.15); /* 稍微增强边框透明度 */
+  border: 1px solid rgba(0,255,65,0.1); /* 终端绿色 */
   border-radius: 20px;
   pointer-events: none;
   margin: 2% 8%;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 统一缓动函数 */
-/* 添加微妙的内发光效果 */
-  box-shadow: inset 0 0 20px rgba(125,211,252,0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* 终端绿色内发光 */
+  box-shadow: inset 0 0 20px rgba(0,255,65,0.03);
 }
 #particles-js canvas {
   display: block;
@@ -842,16 +847,53 @@ code {
   #particles-js::before {
     margin: 0.5rem;
     border-radius: 10px;
-    border-color: rgba(125,211,252,0.1); /* 小屏幕更微妙 */
+    border-color: rgba(0,255,65,0.08); /* 终端绿色 */
   }
   #particles-js canvas {
-    opacity: 0.6; /* 小屏幕进一步减弱 */
+    opacity: 0.4; /* 小屏幕大幅减弱以提高性能 */
   }
 }
 /* 大屏幕时稍微增强效果 */
 @media (min-width: 1200px) {
   #particles-js::before {
-    box-shadow: inset 0 0 30px rgba(125,211,252,0.08), 0 0 20px rgba(125,211,252,0.03);
+    box-shadow: inset 0 0 30px rgba(0,255,65,0.05), 0 0 20px rgba(0,255,65,0.02);
+  }
+}
+/* 性能模式按钮 */
+.perf-toggle {
+  position: fixed;
+  right: 14px;
+  bottom: 18px;
+  z-index: 20000;
+  padding: 6px 10px;
+  background: rgba(0,0,0,0.85);
+  border: 1px solid #00ff41;
+  color: #00ff41;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 12px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0,255,65,0.3);
+}
+/* 性能轻量模式 */
+.perf-lite * {
+  animation: none !important;
+  transition: none !important;
+}
+.perf-lite #particles-js {
+  display: none !important;
+}
+.perf-lite .index_list:hover {
+  transform: none;
+  box-shadow: none;
+}
+/* 尊重系统的“减少动效”设置 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+  #particles-js {
+    display: none !important;
   }
 }
 @-moz-keyframes blink {

@@ -41,9 +41,8 @@
 <meta name="generator" content="Hexo 8.0.0"></head>
 
 <body>
-  <!-- particles.js 粒子系统容器 -->
-  <div id="particles-js"></div>
   
+
   <div class="title">
   <img class="title_img" alt="Title image" width="300" height="300" src="/images/mylogo.jpg" /><br>
   <div id="site_title">Undertaker's Blog</div>
@@ -157,112 +156,10 @@
   <br />
 </foot>
   
-  <!-- particles.js 初始化脚本 -->
-  <script>
-    // particles.js 配置 - 适度增强粒子效果
-    particlesJS('particles-js', {
-      "particles": {
-        "number": {
-          "value": 55,  /* 适度增加粒子数量 */
-          "density": {
-            "enable": true,
-            "value_area": 1000  /* 适度增加密度 */
-          }
-        },
-        "color": {
-          "value": "#00ff41"
-        },
-        "shape": {
-          "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#000000"
-          }
-        },
-        "opacity": {
-          "value": 0.45,  /* 提高透明度，增强可见度 */
-          "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 0.8,  /* 适度加快透明度变化 */
-            "opacity_min": 0.1,
-            "sync": false
-          }
-        },
-        "size": {
-          "value": 2,  /* 适度增大粒子尺寸 */
-          "random": true,
-          "anim": {
-            "enable": true,
-            "speed": 1.2,  /* 加快大小变化 */
-            "size_min": 0.3,
-            "sync": false
-          }
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 130,  /* 增加连接距离，更容易形成网络 */
-          "color": "#00ff41",
-          "opacity": 0.25,  /* 适度提高连接线透明度 */
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 1.2,  /* 适度加快移动速度 */
-          "direction": "none",
-          "random": true,
-          "straight": false,
-          "out_mode": "out",
-          "bounce": false,
-          "attract": {
-            "enable": false,
-            "rotateX": 600,
-            "rotateY": 1200
-          }
-        }
-      },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": true,
-            "mode": "grab"  /* 保持鼠标交互 */
-          },
-          "onclick": {
-            "enable": true,  /* 重新启用点击交互，增加互动性 */
-            "mode": "push"
-          },
-          "resize": true
-        },
-        "modes": {
-          "grab": {
-            "distance": 150,  /* 增加抓取距离 */
-            "line_linked": {
-              "opacity": 0.5  /* 抓取时线条更明显 */
-            }
-          },
-          "bubble": {
-            "distance": 100,
-            "size": 40,
-            "duration": 2,
-            "opacity": 8,
-            "speed": 3
-          },
-          "repulse": {
-            "distance": 200,
-            "duration": 0.4
-          },
-          "push": {
-            "particles_nb": 3  /* 点击时添加3个粒子 */
-          },
-          "remove": {
-            "particles_nb": 2
-          }
-        }
-      },
-      "retina_detect": true
-    });
-  </script>
+  
+  
+<script src="/js/perf-toggle.js"></script>
+
 </body>
 
 </html>
