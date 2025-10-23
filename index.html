@@ -508,71 +508,23 @@
     particlesJS('particles-js', {
       "particles": {
         "number": {
-          "value": 25,  /* 大幅减少粒子数量 */
-          "density": {
-            "enable": true,
-            "value_area": 1500  /* 增加密度区域，降低密度 */
-          }
+          "value": 25,
+          "density": { "enable": true, "value_area": 1500 }
         },
-        "color": {
-          "value": "#00ff41"
-        },
-        "shape": {
-          "type": "circle",
-          "stroke": {
-            "width": 0,
-            "color": "#000000"
-          }
-        },
-        "opacity": {
-          "value": 0.3,  /* 降低透明度 */
-          "random": true,
-          "anim": {
-            "enable": false  /* 禁用透明度动画 */
-          }
-        },
-        "size": {
-          "value": 2,
-          "random": true,
-          "anim": {
-            "enable": false  /* 禁用大小动画 */
-          }
-        },
-        "line_linked": {
-          "enable": true,
-          "distance": 100,  /* 减少连接距离 */
-          "color": "#00ff41",
-          "opacity": 0.15,  /* 降低连接线透明度 */
-          "width": 1
-        },
-        "move": {
-          "enable": true,
-          "speed": 0.5,  /* 大幅降低移动速度 */
-          "direction": "none",
-          "random": false,
-          "straight": false,
-          "out_mode": "out",
-          "bounce": false,
-          "attract": {
-            "enable": false
-          }
-        }
+        "color": { "value": "#00ff41" },
+        "shape": { "type": "circle", "stroke": { "width": 0, "color": "#000000" } },
+        "opacity": { "value": 0.3, "random": true, "anim": { "enable": false } },
+        "size": { "value": 2, "random": true, "anim": { "enable": false } },
+        "line_linked": { "enable": true, "distance": 100, "color": "#00ff41", "opacity": 0.15, "width": 1 },
+        "move": { "enable": true, "speed": 0.5, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false, "attract": { "enable": false } }
       },
-      "interactivity": {
-        "detect_on": "canvas",
-        "events": {
-          "onhover": {
-            "enable": false  /* 禁用鼠标悬停交互 */
-          },
-          "onclick": {
-            "enable": false  /* 禁用点击交互 */
-          },
-          "resize": true
-        }
-      },
-      "retina_detect": false  /* 禁用视网膜检测以提高性能 */
+      "interactivity": { "detect_on": "canvas", "events": { "onhover": { "enable": false }, "onclick": { "enable": false }, "resize": true } },
+      "retina_detect": false
     });
   </script>
+  
+<script src="/js/glow-sweep.js"></script>
+
   
   
 <script src="/js/perf-toggle.js"></script>
