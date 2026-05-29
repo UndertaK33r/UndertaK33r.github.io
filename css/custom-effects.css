@@ -1,20 +1,16 @@
+
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
 .recent-post-item {
   position: relative;
-  overflow: hidden;
   will-change: transform;
+  border: 2px solid transparent;
+  background: linear-gradient(var(--card-bg, #fff), var(--card-bg, #fff)) padding-box, conic-gradient(from var(--border-angle), #ff6b6b, #ffd93d, #6bcb77, #4d96ff, #a66cff, #ff6b6b) border-box;
+  animation: border-angle-rotate 8s linear infinite;
   transition: box-shadow 0.3s ease-in-out;
-}
-.recent-post-item::after {
-  position: absolute;
-  top: -2px;
-  left: -2px;
-  z-index: 0;
-  width: calc(100% + 4px);
-  height: calc(100% + 4px);
-  background: conic-gradient(from 0deg, transparent, rgba(255,107,107,0.15), rgba(255,217,61,0.15), rgba(107,203,119,0.15), rgba(77,150,255,0.15), rgba(166,108,255,0.15), transparent);
-  content: '';
-  pointer-events: none;
-  animation: gradient-border-rotate 6s linear infinite;
 }
 .post-bg {
   will-change: transform;
@@ -36,10 +32,8 @@
   .recent-post-item {
     animation: none !important;
     transform: none !important;
-  }
-  .recent-post-item::after {
-    animation: none !important;
-    display: none !important;
+    border: none !important;
+    background: var(--card-bg) !important;
   }
   .post-bg {
     transition: none !important;
@@ -48,38 +42,26 @@
     display: none !important;
   }
 }
-[data-theme='dark'] .recent-post-item::after {
-  background: conic-gradient(from 0deg, transparent, rgba(255,107,107,0.2), rgba(255,217,61,0.2), rgba(107,203,119,0.2), rgba(77,150,255,0.2), rgba(166,108,255,0.2), transparent);
+[data-theme='dark'] .recent-post-item {
+  background: linear-gradient(var(--card-bg, #1a1a2e), var(--card-bg, #1a1a2e)) padding-box, conic-gradient(from var(--border-angle), rgba(255,107,107,0.6), rgba(255,217,61,0.6), rgba(107,203,119,0.6), rgba(77,150,255,0.6), rgba(166,108,255,0.6), rgba(255,107,107,0.6)) border-box;
 }
-@-moz-keyframes gradient-border-rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
+@-moz-keyframes border-angle-rotate {
+  to {
+    --border-angle: 360deg;
   }
 }
-@-webkit-keyframes gradient-border-rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
+@-webkit-keyframes border-angle-rotate {
+  to {
+    --border-angle: 360deg;
   }
 }
-@-o-keyframes gradient-border-rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
+@-o-keyframes border-angle-rotate {
+  to {
+    --border-angle: 360deg;
   }
 }
-@keyframes gradient-border-rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
+@keyframes border-angle-rotate {
+  to {
+    --border-angle: 360deg;
   }
 }
