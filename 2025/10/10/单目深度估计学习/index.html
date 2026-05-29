@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>单目深度估计学习 | Undertaker's Blog</title><meta name="author" content="UndertaK33r"><meta name="copyright" content="UndertaK33r"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="由于生活不只有自己要学的一些个人技术，还有要完成的学业目标。作为一个苦逼的研究生只能感慨自己本科学习不认真，需要加上研究生生涯让以后好工作时候别人还认得你是个学生。 这篇用来记录我学习我的课题方向的内容，本来想着课题水水就好了，但似乎转别的课题也是一样的起步难，还是算了，就这个课题往下学吧。 深度学习主要需要掌握一下深度学习的流程，这里就不说什么数据集准备，环境搭建啥的，主要聚焦在模型搭建和训练。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="单目深度估计学习">
+<meta property="og:url" content="https://undertak33r.github.io/2025/10/10/%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1%E5%AD%A6%E4%B9%A0/index.html">
+<meta property="og:site_name" content="Undertaker&#39;s Blog">
+<meta property="og:description" content="由于生活不只有自己要学的一些个人技术，还有要完成的学业目标。作为一个苦逼的研究生只能感慨自己本科学习不认真，需要加上研究生生涯让以后好工作时候别人还认得你是个学生。 这篇用来记录我学习我的课题方向的内容，本来想着课题水水就好了，但似乎转别的课题也是一样的起步难，还是算了，就这个课题往下学吧。 深度学习主要需要掌握一下深度学习的流程，这里就不说什么数据集准备，环境搭建啥的，主要聚焦在模型搭建和训练。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://undertak33r.github.io/images/mylogo.jpg">
+<meta property="article:published_time" content="2025-10-10T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-29T10:30:07.203Z">
+<meta property="article:author" content="UndertaK33r">
+<meta property="article:tag" content="单目深度估计">
+<meta property="article:tag" content="深度学习">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://undertak33r.github.io/images/mylogo.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "单目深度估计学习",
+  "url": "https://undertak33r.github.io/2025/10/10/%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1%E5%AD%A6%E4%B9%A0/",
+  "image": "https://undertak33r.github.io/images/mylogo.jpg",
+  "datePublished": "2025-10-10T04:00:00.000Z",
+  "dateModified": "2026-05-29T10:30:07.203Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "UndertaK33r",
+      "url": "https://UndertaK33r.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://undertak33r.github.io/2025/10/10/%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1%E5%AD%A6%E4%B9%A0/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '单目深度估计学习',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/mylogo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Undertaker's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">单目深度估计学习</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">单目深度估计学习</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-10T04:00:00.000Z" title="发表于 2025-10-10 12:00:00">2025-10-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Go/">Go</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><p>由于生活不只有自己要学的一些个人技术，还有要完成的学业目标。作为一个苦逼的研究生只能感慨自己本科学习不认真，需要加上研究生生涯让以后好工作时候<br>别人还认得你是个学生。</p>
+<p>这篇用来记录我学习我的课题方向的内容，本来想着课题水水就好了，但似乎转别的课题也是一样的起步难，还是算了，就这个课题往下学吧。</p>
+<h3 id="深度学习"><a href="#深度学习" class="headerlink" title="深度学习"></a>深度学习</h3><p>主要需要掌握一下深度学习的流程，这里就不说什么数据集准备，环境搭建啥的，主要聚焦在模型搭建和训练。把模型搭建里面的一些概念记录一下：<br>数据归一化：我们训练的数据的范围不一定固定，有的是0-255有的是别的，为了统一一些我们归一化成0-1或者别的范围，让不同的特征具有相同的量级，便于训练</p>
+<p>模型搭建：</p>
+<ul>
+<li><p>卷积层：原始输入中只有比如RGB三个通道或者灰度图，想要提取出图片中的特征，那么就需要使用卷积层，卷积层中会提取出图片中的特征，比如边缘，纹理等等，卷积核大小一般都是3x3或者5x5。卷积核的数量决定了输出的通道数，比如输入是3通道的图片，卷积核数量为64，那么输出的图片中就会有64个通道，每个通道代表一个特征</p>
+</li>
+<li><p>池化层：用来降低图片的空间维度，减少计算量和参数数量。例如2×2的最大池化会将128×128的特征图降为64×64</p>
+</li>
+<li><p>激活函数：卷积层和池化层中都会使用激活函数，比如ReLU，Sigmoid等等，主要是给线形模型提供非线性。</p>
+</li>
+<li><p>损失函数：训练模型时，需要定义损失函数，比如MSE，MAE等等，主要是用来衡量模型预测结果和真实结果之间的差距，然后根据差距来更新模型参数</p>
+</li>
+<li><p>优化器：训练模型时，需要定义优化器，比如SGD，Adam等等，主要是用来更新模型参数</p>
+</li>
+<li><p>正向传播：模型输入图片，经过卷积层和池化层，得到特征图，然后经过全连接层，得到预测结果</p>
+</li>
+<li><p>反向传播：根据损失函数计算梯度，然后根据梯度更新模型参数</p>
+</li>
+</ul>
+<p>模型参数在哪？<br>我们一般用的pytorch框架搭建自己的模型，框架里面封装参数</p>
+<p>注意一下输入数据类型，有的事PIL，有的是tensor，根据函数请求的数据做处理</p>
+<h4 id="归一化："><a href="#归一化：" class="headerlink" title="归一化："></a>归一化：</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs Python"><span class="hljs-keyword">import</span> torchvision.transforms <span class="hljs-keyword">as</span> transforms<br><span class="hljs-comment"># 归一化</span><br><span class="hljs-comment"># 定义均值和标准差</span><br>mean = [<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>]  <span class="hljs-comment"># 对应RGB三个通道的均值</span><br>std = [<span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>, <span class="hljs-number">0.5</span>]  <span class="hljs-comment"># 对应RGB三个通道的标准差</span><br><br><span class="hljs-comment"># 创建transform</span><br>normalize = transforms.Normalize(mean=mean, std=std)<br><br><span class="hljs-comment"># 使用transform</span><br>transform = transforms.Compose([<br>    transforms.ToTensor(),  <span class="hljs-comment"># 将图像转换为Tensor</span><br>    normalize  <span class="hljs-comment"># 对图像进行标准化处理</span><br>])<br><br><span class="hljs-comment"># 应用transform</span><br>normalized_image = transform(image)<br></code></pre></td></tr></table></figure>
+<p>公式：input[channel] &#x3D; (input[channel] - mean[channel])&#x2F;std[channel]</p>
+<h4 id="模型搭建"><a href="#模型搭建" class="headerlink" title="模型搭建"></a>模型搭建</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> torch.nn <span class="hljs-keyword">as</span> nn<br><br><span class="hljs-keyword">class</span> <span class="hljs-title class_">MyModel</span>(nn.Module):<br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">__init__</span>(<span class="hljs-params">self</span>):<br>        <span class="hljs-built_in">super</span>(MyModel, <span class="hljs-variable language_">self</span>).__init__()<br>        <br>        <span class="hljs-comment"># 方法1：逐层定义（推荐用于复杂连接）</span><br>        <span class="hljs-variable language_">self</span>.conv1 = nn.Conv2d(<span class="hljs-number">3</span>, <span class="hljs-number">64</span>, kernel_size=<span class="hljs-number">3</span>, stride=<span class="hljs-number">1</span>, padding=<span class="hljs-number">1</span>)<br>        <span class="hljs-variable language_">self</span>.relu1 = nn.ReLU(inplace=<span class="hljs-literal">True</span>)<br>        <span class="hljs-variable language_">self</span>.pool1 = nn.MaxPool2d(kernel_size=<span class="hljs-number">2</span>, stride=<span class="hljs-number">2</span>)<br>        <br>        <span class="hljs-comment"># 方法2：使用Sequential（适合简单堆叠）</span><br>        <span class="hljs-variable language_">self</span>.features = nn.Sequential(<br>            nn.Conv2d(<span class="hljs-number">64</span>, <span class="hljs-number">128</span>, kernel_size=<span class="hljs-number">3</span>, stride=<span class="hljs-number">1</span>, padding=<span class="hljs-number">1</span>),<br>            nn.ReLU(inplace=<span class="hljs-literal">True</span>),<br>            nn.MaxPool2d(kernel_size=<span class="hljs-number">2</span>, stride=<span class="hljs-number">2</span>),<br>            <span class="hljs-comment"># 可以继续添加更多层...</span><br>        )<br>        <br>        <span class="hljs-comment"># 添加分类层（如果需要分类）</span><br>        <span class="hljs-variable language_">self</span>.classifier = nn.Linear(<span class="hljs-number">128</span>, <span class="hljs-number">10</span>)  <span class="hljs-comment"># 示例</span><br><br>    <span class="hljs-keyword">def</span> <span class="hljs-title function_">forward</span>(<span class="hljs-params">self, x</span>):<br>        <span class="hljs-comment"># 使用逐层定义的部分</span><br>        x = <span class="hljs-variable language_">self</span>.conv1(x)<br>        x = <span class="hljs-variable language_">self</span>.relu1(x)<br>        x = <span class="hljs-variable language_">self</span>.pool1(x)<br>        <br>        <span class="hljs-comment"># 使用Sequential部分</span><br>        x = <span class="hljs-variable language_">self</span>.features(x)<br>        <br>        <span class="hljs-comment"># 如果有全连接层，需要展平</span><br>        <span class="hljs-comment"># x = x.view(x.size(0), -1)</span><br>        <span class="hljs-comment"># x = self.classifier(x)</span><br>        <br>        <span class="hljs-keyword">return</span> x<br><br></code></pre></td></tr></table></figure>
+<h4 id="损失函数和反向传播"><a href="#损失函数和反向传播" class="headerlink" title="损失函数和反向传播"></a>损失函数和反向传播</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs python">loss = nn.CrossEntropyLoss() <span class="hljs-comment">#损失函数</span><br>md = MyModel()<br>optim = torch.optim.SGD(md.parameters(),lr=<span class="hljs-number">0.01</span>)<br><span class="hljs-comment"># lr是学习速率</span><br><span class="hljs-keyword">for</span> epoh <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">20</span>):<br>    running_loss = <span class="hljs-number">0.0</span><br>    <span class="hljs-keyword">for</span> data <span class="hljs-keyword">in</span> dataloader:<br>        imgs, targets = data<br>        outputs = md(imgs)<br>        result_loss = loss(outputs, targets)<br>        optim.zero_grad()  <span class="hljs-comment"># 将梯度清零</span><br>        result_loss.backward()  <span class="hljs-comment"># 通过反向传播求出每一个节点的梯度</span><br>        optim.step()  <span class="hljs-comment"># 对每一个进行调优</span><br>        <span class="hljs-comment"># print(result_loss)</span><br>        running_loss = running_loss + result_loss<br>    <span class="hljs-built_in">print</span>(running_loss)<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="单目深度估计"><a href="#单目深度估计" class="headerlink" title="单目深度估计"></a>单目深度估计</h3><p>单目深度估计指的是输入一张图片，输出一张深度图，深度图表示的是图片中各个像素点的深度。<br>单目深度估计是一个病态问题，因为把一个3维的空间变成二维图像本身就丢失第三维度的深度信息，从2D投影恢复3D结构存在本质上的信息缺失。<br>同时，即使知道物体的相对深度关系，也无法确定绝对尺度。<br>而且，同一张2D图像可能对应多种不同的3D场景结构，没有唯一解。</p>
+<p>此外，单目深度估计的数据集成本较高，本身没有丰富的绝对尺度数据集的同时，不同数据集之间的尺度单位不同。<br>种种条件上看来，单目深度估计存在很大挑战。</p>
+<p>现在我了解到的一些当下的效果较好的单目深度估计的模型有：depth anything2，Marigold等。<br>这两种模型代表了不同的两类单目深度估计模型的思路：判别式模型和生成式模型。</p>
+<h4 id="判别式模型"><a href="#判别式模型" class="headerlink" title="判别式模型"></a>判别式模型</h4><p>核心目标是直接学习从输入图像到深度图的映射关系，通过最小化预测深度与真实深度（Ground Truth）的回归损失（如 MSE、AbsRel 等），输出逐像素的深度值。<br>常用神经网络实现端到端映射。</p>
+<h4 id="生成式模型"><a href="#生成式模型" class="headerlink" title="生成式模型"></a>生成式模型</h4><p>生成式模型是单目深度估计领域的新兴技术路径，其核心目标是学习深度值的逐像素概率分布，而非直接输出确定性深度映射。<br>当下的新兴模型主要是用扩散模型学习深度值的分布规律，可生成多个符合场景逻辑的深度预测结果。</p>
+<p>接下来结合论文来讲解下两个模型</p>
+<h4 id="Depth-Anything"><a href="#Depth-Anything" class="headerlink" title="Depth Anything"></a>Depth Anything</h4><p>Depth Anything系列的工作是在MiDas的基础上进行对自监督训练和样本扩大的尝试。<br>而MiDas的主要贡献在于强调数据量的作用和提出了偏移和尺度不变损失来整合过去的一些数据集，提高模型的泛化能力。<br>在Depth Anything V1中，研究者复现了MiDas，并在此基础上，采用DINO V2预训练权重来初始化编码器，训练教师模型对规模巨大的无标注数据进行伪标签标注。<br>训练出的教师模型对未标注的大规模数据集进行标注，生成伪标签，然后训练学生模型。<br>研究者发现直接用带伪标签的数据集进行训练的学生模型效果不佳。<br>于是他们对已经进行伪标签标注的数据集添加颜色扰动和cutmix进行数据增强，让学生模型学习到更丰富的特征。<br>此外他们结合语意分割进行辅助。在尝试一设计一个共享编码起和两个独立解码器后，对深度估计效果没有显著帮助，由于单纯的解码成离散的语意标签如车而不分清车头车尾，丢失了太多了语意细节。<br>于是研究者使用了DINO V2丰富语意先验知识，在训练中使用特征对齐损失来提升模型性能。让深度模型的编码器和 DINOv2 的编码器“对齐”，同时添加容忍度防止语意模型和深度模型之间的差异过大。<br>Depth Anything V2在Depth Anything V1的基础上进行了进一步研究。在此次研究中进一步提高了数据量，同时，相较于V1，V2更加重视对合成数据的使用。<br>原本的教师模型使用现实数据集中由于设备的固有缺陷导致真实数据集中反而有许多噪音，比如光学测距对透明物体的测距会有偏差，使用合成数据反而能一定程度避免噪声问题。<br>Depth Anything V2的作者对使用合成数据的挑战进行了归纳 ：合成数据的场景有限，同时合成数据的场景过于干净，模型对复杂的现实环境泛化能力有限。<br>研究者的解决办法是使用真实图像来训练学生模型，并使用合成数据来训练教师模型，将两种场景进行桥接 。<br>具体训练中，依旧使用DINO V2作为编码起，根据编码器实现DPT解码器。相对于V1，学生学习的真实数据量扩大到了约62M张。<br>最后，Depth Anything2还针对过去测试数据集本身精度不足的情况推出了DA-2K测试标准，并表现优异。<br>Depth Anything2是非常优秀的判别式模型，与基于 Stable Diffusion 的生成式模型相比，速度快 10 倍以上且准确性更高，提供不同规模模型（25M - 1.3B 参数）支持广泛下游应用场景。</p>
+<h4 id="Marigold"><a href="#Marigold" class="headerlink" title="Marigold"></a>Marigold</h4><p>相对于Depth Anything的力大砖飞，针对具体任务从头训练针对性模型，Marigold则开启了一个新的方向，使用当前扩散模型丰富的先验知识，改造文生图模型为图生图模型，并适配单目深度估计任务。<br>首先是对Stable Diffusion模型进行讲解 。<br>Stable Diffusion模型是一个基于扩散模型（Denoising Diffusion Probabilistic Models，DDPM）的文本到图像生成模型。<br>什么是扩散模型呢？<br>以潜在空间扩散模型为例子，先将原始图像用变分自编码器VAE将原始输入编译到低维潜在空间，然后进行加噪，后续通过去噪来复原图像的过程。在去噪过程中需要预测噪声，并间接学习到输入的图像特征。<br>研究者对原始Stable Diffusion模型进行了轻量级的微调，冻结了VAE等组件，仅微调U-net。<br>模型结构如下：<br>首先将原始RGB图像和深度图像分别进行VAE编码，将获得的潜在空间深度信息进行加噪（逐步添加高斯噪声或者退火多分辨噪声），加噪后的潜在空间深度和潜在空间RGB图像进行拼接。<br>对U-Net进行微调，把输入扩展到6通道，并对第一层的权重进行除以二操作防止激活值膨胀。</p>
+<p>除了对模型的微调外，Marigold还在真值深度图输入到VAE前进行仿射不变深度归一化，并将通道数扩展到3来适配VAE输入。<br>采用的数据集为vKITTI和Hypersim，他们都是合成数据。<br>研究者仅采用越54K量的数据在4090上训练2.5天就实现了在现实数据集上SOTA的效果，可见其泛化能力之强。</p>
+<h4 id="额外内容"><a href="#额外内容" class="headerlink" title="额外内容"></a>额外内容</h4><ul>
+<li>Pixel-Perfect Depth</li>
+</ul>
+<p>单目深度估计模型有许多下游应用场景，其中点云生成就是其中非常常重要的一个场景且点云生成是验证模型性能的核心场景之一。<br>不过当前的模型无论是生成式模型还是判别式模型，在点云生成过程中由于物体边缘的深度值差异较大，在生成点云图像时会产生严重的飞点问题，导致生成的点云图像有严重瑕疵。<br>本篇论文提出的Pixel-Perfect Depth模型，总结了不同模型在生成点云时出现飞点问题的原因，并针对该问题提供了一种有效的解决方案。<br>首先是判别式模型，由于生成的深度图内图像边缘深度差距较大，模型在生成边缘深度信息时会采取折中的策略，导致图像之间出现不规则飞点。<br>而生成式模型由于将图像先用VAE进行降采样，再进行复原，导致一些原始信息丢失，从而导致生成点云图像有飞点。<br>该模型研究者给出的解决办法是基于生成式模型，不进行VAE，直接在像素空间进行扩散。<br>这引出了如下问题： 直接在像素空间进行扩散，收敛困难且模型效果差，同时计算成本高昂。<br>该模型为了解决该问题提出了如下设计：<br>语义提示扩散Transformer（Semantics-Prompted Diffusion Transformers，SP-DiT）<br>级联 DiT 设计（Cascade DiT Design，Cas-DiT）</p>
+<p>由于直接在像素空间进行扩散，输入图像的数值太多，模型很难在保证全局语意一致性（就是桌子得立在地上等）的情况下保证细粒度视觉细节。<br>语义提示扩散Transformer（SP-DiT）使用例如DINO V2等视觉基础模型来快速识别高层语意，利用提取的语意保证全局语意一致性。<br>通过 “双线性插值” 对齐语义与DiT tokens 的空间分辨率，再通过 MLP 融合，最终实现 “全局语义一致性” 与 “细粒度细节” 的平衡。<br>提取的语意token和DiT本身的token数值差异较大，所以要进行L2归一化。<br>级联DiT设计（Cas-DiT）则是因为直接在像素空间进行扩散训练数据巨大，在训练过程中对patch的大小进行调整，开始训练使用大patch，训练到后面用小patch。<br>从粗到细的级联设计不仅显著降低了计算成本提高了效率，而且还带来了显著的准确性增益。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><a class="post-meta__tags" href="/tags/%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1/">单目深度估计</a></div><div class="post-share"><div class="social-share" data-image="/images/mylogo.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/10/13/10.13/" title="10.13"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">10.13</div></div><div class="info-2"><div class="info-item-1">每当生活陷于平静和不耐烦的境地，或者脑海中的过往浮现，各式各样的思考就开始浮出水面。为什么会陷入平静和不耐烦呢？是对 </div></div></div></a><a class="pagination-related" href="/2025/10/09/Go%E8%AF%AD%E8%A8%80AI%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B%EF%BC%883%EF%BC%89/" title="Go语言AI实践过程（3）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Go语言AI实践过程（3）</div></div><div class="info-2"><div class="info-item-1">在上两篇中实现了一个能调用的函数，里面实现了调用llm和持久化对话记录的功能。不过单纯的调用实在是没啥意思，接下来把项目里面的一些硬编码的内容整合一下进行配置化。同时我们的函数是一次性生成一大坨，这样的体验很不好，所以我们将内容改成流式输出。 配置化先把之前硬编码在main文件里的内容用yaml文件装起来，后续有新的配置也可以写在里面我们直接在根目录下建一个config.yaml文件 12345678910111213141516171819# AI 对话助手配置文件# API 配置api:  url: &quot;https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions&quot;  key: &quot;你的apikey&quot;  # 建议使用环境变量 DASHSCOPE_API_KEY  model: &quot;qwen-plus&quot;  prompt: &quot;你是一个说话简洁直接的助手&quot;# MongoDB 配置mongo:  uri: &quot;mongodb://l...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/mylogo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">UndertaK33r</div><div class="author-info-description">Go语言练习生 · 记录学习与生活</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/UndertaK33r"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/UndertaK33r" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2331627921@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">最好的学习方法就是讲一遍</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0"><span class="toc-number">1.</span> <span class="toc-text">深度学习</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%BD%92%E4%B8%80%E5%8C%96%EF%BC%9A"><span class="toc-number">1.1.</span> <span class="toc-text">归一化：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%A8%A1%E5%9E%8B%E6%90%AD%E5%BB%BA"><span class="toc-number">1.2.</span> <span class="toc-text">模型搭建</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0%E5%92%8C%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD"><span class="toc-number">1.3.</span> <span class="toc-text">损失函数和反向传播</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1"><span class="toc-number">2.</span> <span class="toc-text">单目深度估计</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%88%A4%E5%88%AB%E5%BC%8F%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.1.</span> <span class="toc-text">判别式模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%94%9F%E6%88%90%E5%BC%8F%E6%A8%A1%E5%9E%8B"><span class="toc-number">2.2.</span> <span class="toc-text">生成式模型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Depth-Anything"><span class="toc-number">2.3.</span> <span class="toc-text">Depth Anything</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Marigold"><span class="toc-number">2.4.</span> <span class="toc-text">Marigold</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E9%A2%9D%E5%A4%96%E5%86%85%E5%AE%B9"><span class="toc-number">2.5.</span> <span class="toc-text">额外内容</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/10/%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1%E5%AD%A6%E4%B9%A0/" title="单目深度估计学习">单目深度估计学习</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/07/%E5%9F%BA%E4%BA%8Ego%E6%89%8B%E5%86%99RPC/" title="基于go手写RPC">基于go手写RPC</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/29/%E7%AE%97%E6%B3%95%E9%A2%98%E4%BB%93%E5%BA%93/" title="算法题仓库">算法题仓库</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/20/%E5%A4%AF%E5%AE%9E%E5%9F%BA%E7%A1%80GO%E5%B8%B8%E7%94%A8%E5%8C%85/" title="夯实基础GO常用包">夯实基础GO常用包</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/24/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/" title="我的第一篇文章">我的第一篇文章</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By UndertaK33r</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div></div></body></html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>从TCP黏包出发，看看代码用到的一些库 | Undertaker's Blog</title><meta name="author" content="UndertaK33r"><meta name="copyright" content="UndertaK33r"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="参考连接： https:&#x2F;&#x2F;www.topgoer.com&#x2F;%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B&#x2F;socket%E7%BC%96%E7%A8%8B&#x2F;TCP%E9%BB%8F%E5%8C%85.html服务端代码&#x2F;server&#x2F;server.go 1234567891011121314151617181920212223242526272829">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从TCP黏包出发，看看代码用到的一些库">
+<meta property="og:url" content="https://undertak33r.github.io/2025/09/24/%E4%BB%8ETCP%E9%BB%8F%E5%8C%85%E5%87%BA%E5%8F%91%EF%BC%8C%E7%9C%8B%E7%9C%8B%E4%BB%A3%E7%A0%81%E7%94%A8%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BA%93/index.html">
+<meta property="og:site_name" content="Undertaker&#39;s Blog">
+<meta property="og:description" content="参考连接： https:&#x2F;&#x2F;www.topgoer.com&#x2F;%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B&#x2F;socket%E7%BC%96%E7%A8%8B&#x2F;TCP%E9%BB%8F%E5%8C%85.html服务端代码&#x2F;server&#x2F;server.go 1234567891011121314151617181920212223242526272829">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://undertak33r.github.io/images/mylogo.jpg">
+<meta property="article:published_time" content="2025-09-24T04:00:00.000Z">
+<meta property="article:modified_time" content="2026-05-29T10:30:07.202Z">
+<meta property="article:author" content="UndertaK33r">
+<meta property="article:tag" content="TCP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://undertak33r.github.io/images/mylogo.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "从TCP黏包出发，看看代码用到的一些库",
+  "url": "https://undertak33r.github.io/2025/09/24/%E4%BB%8ETCP%E9%BB%8F%E5%8C%85%E5%87%BA%E5%8F%91%EF%BC%8C%E7%9C%8B%E7%9C%8B%E4%BB%A3%E7%A0%81%E7%94%A8%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BA%93/",
+  "image": "https://undertak33r.github.io/images/mylogo.jpg",
+  "datePublished": "2025-09-24T04:00:00.000Z",
+  "dateModified": "2026-05-29T10:30:07.202Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "UndertaK33r",
+      "url": "https://UndertaK33r.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://undertak33r.github.io/2025/09/24/%E4%BB%8ETCP%E9%BB%8F%E5%8C%85%E5%87%BA%E5%8F%91%EF%BC%8C%E7%9C%8B%E7%9C%8B%E4%BB%A3%E7%A0%81%E7%94%A8%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BA%93/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '从TCP黏包出发，看看代码用到的一些库',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/mylogo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Undertaker's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">从TCP黏包出发，看看代码用到的一些库</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">从TCP黏包出发，看看代码用到的一些库</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-09-24T04:00:00.000Z" title="发表于 2025-09-24 12:00:00">2025-09-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-05-29T10:30:07.202Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Go/">Go</a></span></div><div class="meta-secondline"></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h4 id="参考连接：-https-www-topgoer-com-E7-BD-91-E7-BB-9C-E7-BC-96-E7-A8-8B-socket-E7-BC-96-E7-A8-8B-TCP-E9-BB-8F-E5-8C-85-html"><a href="#参考连接：-https-www-topgoer-com-E7-BD-91-E7-BB-9C-E7-BC-96-E7-A8-8B-socket-E7-BC-96-E7-A8-8B-TCP-E9-BB-8F-E5-8C-85-html" class="headerlink" title="参考连接： https://www.topgoer.com/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/socket%E7%BC%96%E7%A8%8B/TCP%E9%BB%8F%E5%8C%85.html"></a>参考连接： <a target="_blank" rel="noopener" href="https://www.topgoer.com/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/socket%E7%BC%96%E7%A8%8B/TCP%E9%BB%8F%E5%8C%85.html">https://www.topgoer.com/%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/socket%E7%BC%96%E7%A8%8B/TCP%E9%BB%8F%E5%8C%85.html</a></h4><h3 id="服务端代码"><a href="#服务端代码" class="headerlink" title="服务端代码"></a>服务端代码</h3><p>&#x2F;server&#x2F;server.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;bufio&quot;</span><br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;io&quot;</span><br>	<span class="hljs-string">&quot;net&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">process</span><span class="hljs-params">(conn net.Conn)</span></span> &#123;<br>	<span class="hljs-keyword">defer</span> conn.Close()<br>	reader := bufio.NewReader(conn)<br>	<span class="hljs-keyword">var</span> buf [<span class="hljs-number">1024</span>]<span class="hljs-type">byte</span><br>	<span class="hljs-keyword">for</span> &#123;<br>		n, err := reader.Read(buf[:])<br>		<span class="hljs-keyword">if</span> err == io.EOF &#123;<br>			<span class="hljs-keyword">break</span><br>		&#125;<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Println(<span class="hljs-string">&quot;read from client failed, err:&quot;</span>, err)<br>			<span class="hljs-keyword">break</span><br>		&#125;<br>		recvStr := <span class="hljs-type">string</span>(buf[:n])<br>		fmt.Println(<span class="hljs-string">&quot;收到client发来的数据：&quot;</span>, recvStr)<br>	&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br><br>	listen, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:30000&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;listen failed, err:&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-keyword">defer</span> listen.Close()<br>	<span class="hljs-keyword">for</span> &#123;<br>		conn, err := listen.Accept()<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Println(<span class="hljs-string">&quot;accept failed, err:&quot;</span>, err)<br>			<span class="hljs-keyword">continue</span><br>		&#125;<br>		<span class="hljs-keyword">go</span> process(conn)<br>	&#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="客户端代码"><a href="#客户端代码" class="headerlink" title="客户端代码"></a>客户端代码</h3><p>&#x2F;client&#x2F;client.go</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;net&quot;</span><br>	<span class="hljs-string">&quot;sync&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	conn, err := net.Dial(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:30000&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;dial failed, err&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-keyword">var</span> wg sync.WaitGroup<br>	<span class="hljs-keyword">defer</span> conn.Close()<br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">20</span>; i++ &#123;<br>		<span class="hljs-keyword">go</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>			<span class="hljs-keyword">defer</span> wg.Done()<br>			msg := fmt.Sprintf(<span class="hljs-string">&quot;hello %d&quot;</span>, i)<br>			conn.Write([]<span class="hljs-type">byte</span>(msg))<br>		&#125;()<br>		wg.Add(<span class="hljs-number">1</span>)<br>	&#125;<br>	wg.Wait()<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>（其实这里不一定要用goroutine和waitgroup，但基本上写代码时候没怎么实操过goroutine所以在这里顺手写一下就当练习）</p>
+<p>虽然写了不少的go代码，但有些时候单纯用过第二次看的时候第一时间还是想不起来这玩意是干什么的，索性直接今天贴上代码时候把库的源码看一看。</p>
+<p>当然我们先来看看这两个代码的运行结果：<br>收到client发来的数据： hello 0hello 1hello 2hello 8<br>收到client发来的数据： hello 15hello 5<br>收到client发来的数据： hello 6<br>…<br>多余的我们先舍弃，前两行就能看出，部分消息黏在一起了，这就是TCP黏包<br>原因让AI来回答一下：</p>
+<ul>
+<li>TCP粘包的根本原因是TCP协议是面向字节流的协议，它不保证数据包的边界。</li>
+<li>在TCP协议中，数据包可能会被分片，即数据包被分成多个 smaller packets，然后这些 smaller packets 被发送到对方，然后这些 smaller packets 被重新组合成完整的数据包。</li>
+</ul>
+<p>这里有一些算法原因，比如：</p>
+<ul>
+<li>由Nagle算法造成的发送端的粘包：Nagle算法是一种改善网络传输效率的算法。简单来说就是当我们提交一段数据给TCP发送时，TCP并不立刻发送此段数据，而是等待一小段时间看看在等待期间是否还有要发送的数据，若有则会一次把这两段数据发送出去。</li>
+<li>接收端接收不及时造成的接收端粘包：TCP会把接收到的数据存在自己的缓冲区中，然后通知应用层取数据。当应用层由于某些原因不能及时的把TCP的数据取出来，就会造成TCP缓冲区中存放了几段数据。</li>
+</ul>
+<p>解决办法就是用编解码，实际上编解码的作用很多，这里似乎是顺手就解决了黏包问题😀</p>
+<p>还是先来看看上面的代码的一些函数的解释吧。这里还是不给出具体代码的解释，来看看源码需要什么参数</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// Conn is a generic stream-oriented network connection.</span><br><span class="hljs-comment">// Conn 是一种通用的面向流的网络连接。</span><br><span class="hljs-comment">// Multiple goroutines may invoke methods on a Conn simultaneously.</span><br><span class="hljs-comment">// 多个 goroutine 可以同时调用 Conn 上的方法。</span><br><span class="hljs-comment">// 总之Conn 接口定义了通用的面向流的网络连接，支持读写、关闭、地址获取及超时控制。</span><br><span class="hljs-keyword">type</span> Conn <span class="hljs-keyword">interface</span> &#123;<br>    Read(b []<span class="hljs-type">byte</span>) (n <span class="hljs-type">int</span>, err <span class="hljs-type">error</span>)<br>    Write(b []<span class="hljs-type">byte</span>) (n <span class="hljs-type">int</span>, err <span class="hljs-type">error</span>)<br>    Close() <span class="hljs-type">error</span><br>    <span class="hljs-comment">//...还有一些暂时没用到先省略</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>所以说TCP属于这个定义有其实现，那么我们看到main函数里面</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go">listen, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:30000&quot;</span>)<br>conn, err := listen.Accept()<br><span class="hljs-keyword">go</span> process(conn)<br></code></pre></td></tr></table></figure>
+<p>主要就是这三个函数<br>那么来看看net.Listen()</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//Listen 函数用于在本地网络地址上监听传入的连接。它支持 TCP、Unix 域套接字等协议，并根据需要自动选择端口。使用时需指定网络类型和地址，返回一个 Listener 实例。</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Listen</span><span class="hljs-params">(network, address <span class="hljs-type">string</span>)</span></span> (Listener, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-keyword">var</span> lc ListenConfig<br>	<span class="hljs-keyword">return</span> lc.Listen(context.Background(), network, address)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>总之就是 创建一个监听器，它会一直监听指定的地址和端口<br>Accept() 方法会返回一个连接对象，由于监听器指定了tcp，所以返回的连接对象也是tcp连接对象</p>
+<p>回到process方法<br>n, err :&#x3D; reader.Read(buf[:]) 这就是让缓冲器接受读到的数据</p>
+<p>接下来看看客户端的一些方法</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//这是一个便捷函数，封装了网络连接的创建过程，支持TCP、UDP、IP等协议。</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Dial</span><span class="hljs-params">(network, address <span class="hljs-type">string</span>)</span></span> (Conn, <span class="hljs-type">error</span>) &#123;<br>    <span class="hljs-keyword">var</span> d Dialer<br>	<span class="hljs-keyword">return</span> d.Dial(network, address)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>就是和我们的服务端对上连接了<br>咱们这里有两个conn，一个是conn是服务端，conn是客户端，相当于一个管子的两个口子，往里面做事情两边都能收得到<br>所以conn.Write([]byte(msg))<br>在服务端可以接受得到</p>
+<hr>
+<p>接下来看看编解码怎么做</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> proto<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;bufio&quot;</span><br>	<span class="hljs-string">&quot;bytes&quot;</span><br>	<span class="hljs-string">&quot;encoding/binary&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Encode</span><span class="hljs-params">(message <span class="hljs-type">string</span>)</span></span> ([]<span class="hljs-type">byte</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">//前4字节表示长度</span><br>	<span class="hljs-keyword">var</span> length = <span class="hljs-type">int32</span>(<span class="hljs-built_in">len</span>(message))<br>	<span class="hljs-comment">//创建一个字节缓冲区</span><br>	<span class="hljs-keyword">var</span> pkg = <span class="hljs-built_in">new</span>(bytes.Buffer)<br><br>	<span class="hljs-comment">//写入长度</span><br>	<span class="hljs-comment">//Write函数接受三个参数，第一个参数是io.Writer，第二个参数是编码格式，第三个参数是要写入的数据</span><br>	err := binary.Write(pkg, binary.LittleEndian, length)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br><br>	err = binary.Write(pkg, binary.LittleEndian, []<span class="hljs-type">byte</span>(message))<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> pkg.Bytes(), <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Decode</span><span class="hljs-params">(reader *bufio.Reader)</span></span> (<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">//length 是原始数据，size 是经过解码后的有意义的长度值。</span><br>	length, _ := reader.Peek(<span class="hljs-number">4</span>)<br>	buf := bytes.NewBuffer(length)<br>	<span class="hljs-keyword">var</span> size <span class="hljs-type">int32</span><br>	<span class="hljs-comment">//把长度读到size里面</span><br>	err := binary.Read(buf, binary.LittleEndian, &amp;size)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, err<br>	&#125;<br>	<span class="hljs-comment">// 主要处理粘包问题的代码</span><br>	<span class="hljs-comment">// 保证数据完整性，缓冲区中的数据足够构成一个完整的数据包</span><br>	<span class="hljs-keyword">if</span> <span class="hljs-type">int32</span>(reader.Buffered()) &lt; size+<span class="hljs-number">4</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, err<br>	&#125;<br><br>	pack := <span class="hljs-built_in">make</span>([]<span class="hljs-type">byte</span>, <span class="hljs-type">int</span>(<span class="hljs-number">4</span>+size))<br>	_, err = reader.Read(pack)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-type">string</span>(pack[<span class="hljs-number">4</span>:]), <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>这次懒得再深入了，补充了一些注解<br>在客户端和服务端调用即可，主要看看这两个函数需要接受什么参数然后把原代码中有的类型按需求放进去就行。<br>详情见参考链接。</p>
+</article><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/TCP/">TCP</a></div><div class="post-share"><div class="social-share" data-image="/images/mylogo.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2025/09/24/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/" title="我的第一篇文章"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">我的第一篇文章</div></div><div class="info-2"><div class="info-item-1">魔童降世，blog开天辟地第一章最近有点无所事事啊，没有什么目标，属于是随便写点什么。作为今天博客刚创建第一篇章，把我9.3写的小作文重新拉回来  93小随笔今年是抗日战争胜利80周年，相关的纪念与回顾渐渐重回视野，也将我的思绪带回了那段沉重的历史。无论是九一八、七七事变，还是南京大屠杀，这些刻骨铭心的事件，在我更年轻的岁月里，曾让我片面地觉得日军战斗力极强，而我方抵抗显得如此艰难，甚至一度怀疑：如果日本没有进攻美国，我们是否根本无法取胜？于是不禁庆幸自己没有生在那个年代。经过十四年艰苦卓绝的斗争，中国人民最终赢得了胜利。在这个过程中，中国共产党发挥了中流砥柱的作用。早年我对此不以为然，认为国民党军队作战规模更大、伤亡更重，共产党即便贡献再大，恐怕也难当“中流砥柱”四字。如今回想，当时的自己实在浅薄，而现在的我，总算有了一些进步。即便以今天的眼光回望，日军的迅猛推进依然令人窒息，那个年代的人们又是靠着怎样的信念坚守民族尊严与国家命运？但中国共产党即便在国民党“剿共”的压力之下，依然坚持抗日。教员更以卓越的战略眼光判断这是一场持久战，从而为无数人点燃希望，让抗战之火持续燃烧，保家卫...</div></div></div></a><a class="pagination-related" href="/2025/09/24/Go%E5%85%AB%E8%82%A1%E4%B9%8B%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%EF%BC%881%EF%BC%89/" title="Go八股之并发编程（1）"><div class="cover" style="background: var(--default-bg-color)"></div><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Go八股之并发编程（1）</div></div><div class="info-2"><div class="info-item-1">进程·线程·协程进程操作系统管理 CPU、内存、磁盘 IO 等硬件资源时，会以 “进程” 为最小粒度分配。不同进程的资源相互隔离。若打开两个浏览器窗口，就会对应两个独立进程，各自拥有资源、独立运行。 线程线程是进程内的执行单元，共享进程的内存和资源，多个线程可在同一进程内并发执行。没有独立资源，依赖所属进程的资源生存。CPU 调度的基本单位。 ps 线程切换远小于进程但是也有额外开销，需要保存线程上下文，过程设计内核态切换等，会产生时间和资源消耗。 大多数操作系统中一个线程默认会占用4MB内存 协程（goroutine）协程是线程的轻量级实现，由go 运行时管理，即被程序控制，开销远小于线程。 Go Go 中一个 goroutine 初始默认占用2KB栈空间  GMP模型什么是GMP模型？来收集一下G , M , P 的含义G：goroutineM：machine(OS threadMachine) — 线程P：processor — 逻辑处理器（调度器） G（Goroutine）- 协程定义：Go中的轻量级线程，由Go运行时管理特点：  初始栈大小仅2KB，可动态增长  创建和...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/mylogo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">UndertaK33r</div><div class="author-info-description">Go语言练习生 · 记录学习与生活</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/UndertaK33r"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/UndertaK33r" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2331627921@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">最好的学习方法就是讲一遍</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E5%8F%82%E8%80%83%E8%BF%9E%E6%8E%A5%EF%BC%9A-https-www-topgoer-com-E7-BD-91-E7-BB-9C-E7-BC-96-E7-A8-8B-socket-E7-BC-96-E7-A8-8B-TCP-E9-BB-8F-E5-8C-85-html"><span class="toc-number">1.</span> <span class="toc-text">参考连接： https:&#x2F;&#x2F;www.topgoer.com&#x2F;%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B&#x2F;socket%E7%BC%96%E7%A8%8B&#x2F;TCP%E9%BB%8F%E5%8C%85.html</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E4%BB%A3%E7%A0%81"><span class="toc-number">2.</span> <span class="toc-text">服务端代码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BB%A3%E7%A0%81"><span class="toc-number">3.</span> <span class="toc-text">客户端代码</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/10/%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1%E5%AD%A6%E4%B9%A0/" title="单目深度估计学习">单目深度估计学习</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/07/%E5%9F%BA%E4%BA%8Ego%E6%89%8B%E5%86%99RPC/" title="基于go手写RPC">基于go手写RPC</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/29/%E7%AE%97%E6%B3%95%E9%A2%98%E4%BB%93%E5%BA%93/" title="算法题仓库">算法题仓库</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/20/%E5%A4%AF%E5%AE%9E%E5%9F%BA%E7%A1%80GO%E5%B8%B8%E7%94%A8%E5%8C%85/" title="夯实基础GO常用包">夯实基础GO常用包</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/24/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/" title="我的第一篇文章">我的第一篇文章</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By UndertaK33r</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div></div></body></html>

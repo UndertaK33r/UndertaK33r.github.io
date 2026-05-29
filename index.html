@@ -1,0 +1,206 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Undertaker's Blog</title><meta name="author" content="UndertaK33r"><meta name="copyright" content="UndertaK33r"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="Go语言练习生，记录学习与生活">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Undertaker&#39;s Blog">
+<meta property="og:url" content="https://undertak33r.github.io/index.html">
+<meta property="og:site_name" content="Undertaker&#39;s Blog">
+<meta property="og:description" content="Go语言练习生，记录学习与生活">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://undertak33r.github.io/images/mylogo.jpg">
+<meta property="article:author" content="UndertaK33r">
+<meta property="article:tag" content="Go,leetcode,AI,RPC,Redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://undertak33r.github.io/images/mylogo.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Undertaker's Blog",
+  "alternateName": [
+    "undertak33r.github.io"
+  ],
+  "url": "https://undertak33r.github.io/"
+}</script><link rel="shortcut icon" href="/favicon.ico"><link rel="canonical" href="https://undertak33r.github.io/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', 'undefined')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Undertaker\'s Blog',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.1.2"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/images/mylogo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Undertaker's Blog</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">Undertaker's Blog</h1><div id="site_social_icons"><a class="social-icon" href="https://github.com/UndertaK33r" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2331627921@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2026/05/27/hello-world/" title="Hello World">Hello World</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2026-05-27T12:18:22.407Z" title="发表于 2026-05-27 20:18:22">2026-05-27</time></span></div><div class="content">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &quot;My New Post&quot;  More info: Writing Run server1$ hexo server  More info: Server Generate static files1$ hexo generate  More info: Generating Deploy to remote sites1$ hexo deploy  More info: Deployment </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/11/07/%E5%9F%BA%E4%BA%8Ego%E6%89%8B%E5%86%99RPC/" title="基于go手写RPC">基于go手写RPC</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-11-07T04:00:00.000Z" title="发表于 2025-11-07 12:00:00">2025-11-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go/">Go</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Go/">Go</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/RPC/">RPC</a></span></div><div class="content">参考链接：https://geektutu.com/post/geerpc.html首先认识RPC，RPC（Remote Procedure Call）远程过程调用，RPC 是一种用于在远程计算机程序之间进行通信的协议。RPC 允许远程计算机程序调用远程程序上的函数，就像本地程序调用本地程序一样。 要写一个RPC，首先要理解两个程序之间通信需要的过程：  确定采用的传输协议，程序位于不同机器一般用TCP或HTTP，程序位于同一台机器一般用UNIX Socket。 之后确定报文的编码格式，一般采用JSON（常用）或protobuf（报文较大）。更大可能压缩。 解决可用性问题：超时、异步、并发等。 注册中心：服务端启动时向注册中心注册自己，客户端调用时从注册中心获取可用实例。 ……  首先处理服务端和消息编码：实现一个简易的服务端，仅接受消息，不处理codec&#x2F;codec.go 123456789101112131415161718192021222324252627282930313233package codecimport &quot;io&quot;type Hea...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/20/%E5%A4%AF%E5%AE%9E%E5%9F%BA%E7%A1%80GO%E5%B8%B8%E7%94%A8%E5%8C%85/" title="夯实基础GO常用包">夯实基础GO常用包</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-20T04:00:00.000Z" title="发表于 2025-10-20 12:00:00">2025-10-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go/">Go</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Go/">Go</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/package/">package</a></span></div><div class="content">在日常开发或者实践中有许多go的包经常用到，虽然我们可以直接去(https://pkg.go.dev)查看自己想用的包，但是似乎不是很友好。另外，有时候虽然用一些包但是只是用过的话，记忆点不是很深刻，重新用的时候还是很恐惧😱，因此需要记录一下同时夯实基础😼。 timetime包提供了对时间的操作，比如获取当前时间、格式化时间、计算时间间隔等等。在我们喜闻乐见的上下文中或者数据库定义里我们经常会用time.Time 1234   // 获取当前时间var t time.Timet = time.Now()fmt.Println(t.Format(&quot;2006-01-02 15:04:05&quot;)) 可以用Year(), Month(), Day(), Hour(), Minute(), Second()等方法来获取时间的各个部分 1234567// 获取时间的各个部分fmt.Println(t.Year())fmt.Println(t.Month())fmt.Println(t.Day())fmt.Println(t.Hour())fmt.Println(t.Mi...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/13/10.13/" title="10.13">10.13</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-13T04:00:00.000Z" title="发表于 2025-10-13 12:00:00">2025-10-13</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/%E6%97%A5%E5%B8%B8/">日常</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%8D%9A%E5%AE%A2%EF%BC%8C%E6%96%87%E7%AB%A0/">博客，文章</a></span></div><div class="content">每当生活陷于平静和不耐烦的境地，或者脑海中的过往浮现，各式各样的思考就开始浮出水面。为什么会陷入平静和不耐烦呢？是对 </div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/10/%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1%E5%AD%A6%E4%B9%A0/" title="单目深度估计学习">单目深度估计学习</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-10T04:00:00.000Z" title="发表于 2025-10-10 12:00:00">2025-10-10</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go/">Go</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/">深度学习</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1/">单目深度估计</a></span></div><div class="content">由于生活不只有自己要学的一些个人技术，还有要完成的学业目标。作为一个苦逼的研究生只能感慨自己本科学习不认真，需要加上研究生生涯让以后好工作时候别人还认得你是个学生。 这篇用来记录我学习我的课题方向的内容，本来想着课题水水就好了，但似乎转别的课题也是一样的起步难，还是算了，就这个课题往下学吧。 深度学习主要需要掌握一下深度学习的流程，这里就不说什么数据集准备，环境搭建啥的，主要聚焦在模型搭建和训练。把模型搭建里面的一些概念记录一下：数据归一化：我们训练的数据的范围不一定固定，有的是0-255有的是别的，为了统一一些我们归一化成0-1或者别的范围，让不同的特征具有相同的量级，便于训练 模型搭建：  卷积层：原始输入中只有比如RGB三个通道或者灰度图，想要提取出图片中的特征，那么就需要使用卷积层，卷积层中会提取出图片中的特征，比如边缘，纹理等等，卷积核大小一般都是3x3或者5x5。卷积核的数量决定了输出的通道数，比如输入是3通道的图片，卷积核数量为64，那么输出的图片中就会有64个通道，每个通道代表一个特征  池化层：用来降低图片的空间维度，减少计算量和参数数量。例如2×2的最大池化会...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/09/Go%E6%93%8D%E4%BD%9CRedis%E4%BB%A5%E5%8F%8A%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9/" title="Go操作Redis以及相关内容">Go操作Redis以及相关内容</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-09T04:00:00.000Z" title="发表于 2025-10-09 12:00:00">2025-10-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go/">Go</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Go/">Go</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Redis/">Redis</a></span></div><div class="content">最近写了一个项目涉及到了缓存，需要用到布隆过滤器。正好平常也没记录对Redis的操作，所以就记录一下。并把内容整理一下没准以后面试或者写新项目需要。 什么是RedisRedis 是一个开源的内存数据结构存储系统，它使用键值对（key-value）的形式存储数据。Redis 支持多种数据结构，包括字符串、哈希表、列表、集合和有序集合等。Redis 的数据存储在内存中，因此可以提供非常高的读写性能。Redis 还支持持久化，可以将数据保存到磁盘中。 Redis的主要数据结构Redis支持五种主要的数据结构：  字符串（String） 哈希表（Hash） 列表（List） 集合（Set） 有序集合（Sorted Set）  Redis常用操作以下操作基于go-redis先用go配置redis 1234567rdb := redis.NewClient(&amp;redis.Options&#123;	Addr:     &quot;localhost:6379&quot;,	Password: &quot;&quot;, // 密码	DB:       0,  // 数据库	PoolS...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/10/09/Go%E8%AF%AD%E8%A8%80AI%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B%EF%BC%883%EF%BC%89/" title="Go语言AI实践过程（3）">Go语言AI实践过程（3）</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-09T04:00:00.000Z" title="发表于 2025-10-09 12:00:00">2025-10-09</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go/">Go</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Go/">Go</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/AI/">AI</a></span></div><div class="content">在上两篇中实现了一个能调用的函数，里面实现了调用llm和持久化对话记录的功能。不过单纯的调用实在是没啥意思，接下来把项目里面的一些硬编码的内容整合一下进行配置化。同时我们的函数是一次性生成一大坨，这样的体验很不好，所以我们将内容改成流式输出。 配置化先把之前硬编码在main文件里的内容用yaml文件装起来，后续有新的配置也可以写在里面我们直接在根目录下建一个config.yaml文件 12345678910111213141516171819# AI 对话助手配置文件# API 配置api:  url: &quot;https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions&quot;  key: &quot;你的apikey&quot;  # 建议使用环境变量 DASHSCOPE_API_KEY  model: &quot;qwen-plus&quot;  prompt: &quot;你是一个说话简洁直接的助手&quot;# MongoDB 配置mongo:  uri: &quot;mongodb://l...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/29/%E7%AE%97%E6%B3%95%E9%A2%98%E4%BB%93%E5%BA%93/" title="算法题仓库">算法题仓库</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-29T04:00:00.000Z" title="发表于 2025-09-29 12:00:00">2025-09-29</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go/">Go</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/leetcode/">leetcode</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E7%AE%97%E6%B3%95/">算法</a></span></div><div class="content">记录一下个人在日常刷题过程中遇到的题目 动态规划区间规划25.9.29每日一题：1039. 多边形三角剖分的最低得分  进行拆分，选边ij为底进行顺时针遍历k，（题目中给的是一个数组）dp[i][j]表示j-i+1边形拆分最小值最后返回的是dp[0][n-1]所以i倒叙遍历，从后往前转移，j从i+2开始正序遍历，k在ij之间正序遍历转移方程：dp[i][j] &#x3D; min(dp[i][j], dp[i][k] + dp[k][j] + sides[i] * sides[k] * sides[j])这题很有意思，可以多看几次  5.最长回文子串  区间规划的模板题，dp[i][j]表示子串s[i:j+1]是否为回文串,两个字母相等后如果两者相距小于2，那么为true，否则状态从dp[i+1][j-1]转移过来。由于每单个字母都是回文子串所以dp[i][i]为true，这是初始化。最后返回最长子串，所以维护start和maxLen来追踪最长子串的起始位置和长度。  链表 237. 删除链表中的节点   脑筋急转弯，跳出找到前一个节点的思维，把当前节点变成next节点，然后删除...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/28/Go%E6%93%8D%E4%BD%9CMongoDB%E5%B0%9D%E8%AF%95/" title="Go操作MongoDB尝试">Go操作MongoDB尝试</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-28T04:00:00.000Z" title="发表于 2025-09-28 12:00:00">2025-09-28</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go/">Go</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Go/">Go</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/%E6%8C%81%E4%B9%85%E5%8C%96/">持久化</a></span></div><div class="content">一般来说，写项目时候都会用到数据库来做数据的持久化，大家基本上都是用MySQL，提到NoSQL的话，大家会想到Redis。虽然嘛也很够用，但是在最近AI项目越来越流行的情况下，我们要和大模型的接口进行交互，频繁的用到json格式的数据，这种情况下以bson格式存储数据会更加方便。而且怎么说呢，学点新技术来说也不错。前天和朋友逛的时候聊到mongoDB，他说高手都用mongoDB，不管它说的是真的假的，实践一下总没错。 什么是mongoDB介绍 mongoDB是一个开源的NoSQL数据库，它使用JSON（JavaScript Object Notation）格式存储数据，并且支持查询、索引、更新和删除数据。mongoDB是一个文档型数据库，每个文档（document）是一个键值对（key-value）结构，它可以包含任意数量的字段，并且每个字段都可以包含任意类型的值。mongoDB是一个分布式数据库，它可以 horizontally scale（水平扩展），并且可以自动进行  前面忘了后面忘了中间忘了，这个介绍只是水下字数，重点还是操作和怎么在需要它的场景下操作它。首先我们先配置一...</div></div></div><div class="recent-post-item"><div class="recent-post-info no-cover"><a class="article-title" href="/2025/09/28/Go%E8%AF%AD%E8%A8%80AI%E5%AE%9E%E8%B7%B5%E8%BF%87%E7%A8%8B%EF%BC%882%EF%BC%89/" title="Go语言AI实践过程（2）">Go语言AI实践过程（2）</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-09-28T04:00:00.000Z" title="发表于 2025-09-28 12:00:00">2025-09-28</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go/">Go</a></span><span class="article-meta tags"><span class="article-meta-separator">|</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/Go/">Go</a><span class="article-meta-link">•</span><i class="fas fa-tag"></i><a class="article-meta__tags" href="/tags/AI/">AI</a></span></div><div class="content">书接上文，我们讲到了要用mongoDB来存储对话信息。但由于本人当时对mongoDB不是很熟悉啊，去查了查资料并总结了一下用法。总之现在开始可以继续推进AI的实践了。 持久化我们需要把聊天记录保存到数据库中，方便后续查询。先用Docker拉起一个mongoDB的容器，这样方便很多。具体代码参考上一篇操作mongoDB的，不过现在AI这么发达，让AI生成就完事了。算了还是放在下面： 12345678910version: &#x27;3.8&#x27;services:  mongodb:    image: mongo:latest    container_name: mongodb_demo    ports:      - &quot;27017:27017&quot;volumes:  mongodb_data:  接下来，我们开始改代码了。这次的代码变得有点长了，我们用一个单独的文件来写。这个文件不仅把上一次的代码全装在里面了，还把mongoDB的代码也装在里面的 。这其实有点复杂，后续会进行改进。  \model\model.go  12345678910111213...</div></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/images/mylogo.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">UndertaK33r</div><div class="author-info-description">Go语言练习生 · 记录学习与生活</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">16</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/UndertaK33r"><i class="fab fa-github"></i><span>GitHub</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/UndertaK33r" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:2331627921@qq.com" target="_blank" title="Email"><i class="fas fa-envelope"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">最好的学习方法就是讲一遍</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/10/%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1%E5%AD%A6%E4%B9%A0/" title="单目深度估计学习">单目深度估计学习</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/11/07/%E5%9F%BA%E4%BA%8Ego%E6%89%8B%E5%86%99RPC/" title="基于go手写RPC">基于go手写RPC</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/29/%E7%AE%97%E6%B3%95%E9%A2%98%E4%BB%93%E5%BA%93/" title="算法题仓库">算法题仓库</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/10/20/%E5%A4%AF%E5%AE%9E%E5%9F%BA%E7%A1%80GO%E5%B8%B8%E7%94%A8%E5%8C%85/" title="夯实基础GO常用包">夯实基础GO常用包</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2025/09/24/%E6%88%91%E7%9A%84%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0/" title="我的第一篇文章">我的第一篇文章</a><time datetime="2026-05-29T10:30:07.203Z" title="更新于 2026-05-29 18:30:07">2026-05-29</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Go/"><span class="card-category-list-name">Go</span><span class="card-category-list-count">12</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E6%97%A5%E5%B8%B8/"><span class="card-category-list-name">日常</span><span class="card-category-list-count">2</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/TCP/" style="font-size: 1.1em; color: #999">TCP</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.1em; color: #999">算法</a> <a href="/tags/context/" style="font-size: 1.1em; color: #999">context</a> <a href="/tags/%E5%8D%95%E7%9B%AE%E6%B7%B1%E5%BA%A6%E4%BC%B0%E8%AE%A1/" style="font-size: 1.1em; color: #999">单目深度估计</a> <a href="/tags/AI/" style="font-size: 1.37em; color: #99a4b2">AI</a> <a href="/tags/%E5%8D%9A%E5%AE%A2%EF%BC%8C%E6%96%87%E7%AB%A0/" style="font-size: 1.1em; color: #999">博客，文章</a> <a href="/tags/RPC/" style="font-size: 1.1em; color: #999">RPC</a> <a href="/tags/%E6%8C%81%E4%B9%85%E5%8C%96/" style="font-size: 1.1em; color: #999">持久化</a> <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" style="font-size: 1.1em; color: #999">深度学习</a> <a href="/tags/Redis/" style="font-size: 1.1em; color: #999">Redis</a> <a href="/tags/goroutine/" style="font-size: 1.23em; color: #999ea6">goroutine</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 1.1em; color: #999">数据结构</a> <a href="/tags/leetcode/" style="font-size: 1.1em; color: #999">leetcode</a> <a href="/tags/%E7%AC%AC%E4%B8%80%E7%AF%87/" style="font-size: 1.1em; color: #999">第一篇</a> <a href="/tags/Go/" style="font-size: 1.5em; color: #99a9bf">Go</a> <a href="/tags/package/" style="font-size: 1.1em; color: #999">package</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2026/05/">
+            <span class="card-archive-list-date">
+              五月 2026
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/11/">
+            <span class="card-archive-list-date">
+              十一月 2025
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/10/">
+            <span class="card-archive-list-date">
+              十月 2025
+            </span>
+            <span class="card-archive-list-count">5</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/09/">
+            <span class="card-archive-list-date">
+              九月 2025
+            </span>
+            <span class="card-archive-list-count">8</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">15</div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-05-29T10:30:17.809Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By UndertaK33r</span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"></div></div></body></html>
